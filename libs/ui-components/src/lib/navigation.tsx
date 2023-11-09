@@ -503,11 +503,11 @@ export default function Navbar() {
                     className="flex items-center text-gray-700 hover:text-gray-800"
                   >
                     <img
-                      src="https://tailwindui.com/img/flags/flag-canada.svg"
+                      src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Flag_of_Kenya.svg/800px-Flag_of_Kenya.svg.png?20221128225827"
                       alt=""
                       className="block h-auto w-5 flex-shrink-0"
                     />
-                    <span className="ml-3 block text-sm font-medium">CAD</span>
+                    <span className="ml-3 block text-sm font-medium">KES</span>
                     <span className="sr-only">, change currency</span>
                   </a>
                 </div>

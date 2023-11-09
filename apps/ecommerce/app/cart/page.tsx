@@ -1,14 +1,18 @@
-'use client';
-
+"use client"
 import { Fragment, useState } from 'react';
 import { Dialog, Popover, Tab, Transition } from '@headlessui/react';
 import {
   Bars3Icon,
   MagnifyingGlassIcon,
   ShoppingBagIcon,
-  XMarkIcon,
+  XMarkIcon as XMarkIconOutline,
 } from '@heroicons/react/24/outline';
-import Link from 'next/link';
+import {
+  CheckIcon,
+  ClockIcon,
+  QuestionMarkCircleIcon,
+  XMarkIcon as XMarkIconMini,
+} from '@heroicons/react/20/solid';
 
 const navigation = {
   categories: [
@@ -139,38 +143,59 @@ const navigation = {
     { name: 'Stores', href: '#' },
   ],
 };
-const favorites = [
+const products = [
   {
     id: 1,
-    name: 'Black Basic Tee',
-    price: '$32',
+    name: 'Basic Tee',
     href: '#',
+    price: '$32.00',
+    color: 'Sienna',
+    inStock: true,
+    size: 'Large',
     imageSrc:
-      'https://tailwindui.com/img/ecommerce-images/home-page-03-favorite-01.jpg',
-    imageAlt: "Model wearing women's black cotton crewneck tee.",
+      'https://tailwindui.com/img/ecommerce-images/shopping-cart-page-01-product-01.jpg',
+    imageAlt: "Front of men's Basic Tee in sienna.",
   },
   {
     id: 2,
-    name: 'Off-White Basic Tee',
-    price: '$32',
+    name: 'Basic Tee',
     href: '#',
+    price: '$32.00',
+    color: 'Black',
+    inStock: false,
+    leadTime: '3–4 weeks',
+    size: 'Large',
     imageSrc:
-      'https://tailwindui.com/img/ecommerce-images/home-page-03-favorite-02.jpg',
-    imageAlt: "Model wearing women's off-white cotton crewneck tee.",
+      'https://tailwindui.com/img/ecommerce-images/shopping-cart-page-01-product-02.jpg',
+    imageAlt: "Front of men's Basic Tee in black.",
   },
   {
     id: 3,
-    name: 'Mountains Artwork Tee',
-    price: '$36',
+    name: 'Nomad Tumbler',
     href: '#',
+    price: '$35.00',
+    color: 'White',
+    inStock: true,
     imageSrc:
-      'https://tailwindui.com/img/ecommerce-images/home-page-03-favorite-03.jpg',
-    imageAlt:
-      "Model wearing women's burgundy red crewneck artwork tee with small white triangle overlapping larger black triangle.",
+      'https://tailwindui.com/img/ecommerce-images/shopping-cart-page-01-product-03.jpg',
+    imageAlt: 'Insulated bottle with white base and black snap lid.',
   },
 ];
+const relatedProducts = [
+  {
+    id: 1,
+    name: 'Billfold Wallet',
+    href: '#',
+    imageSrc:
+      'https://tailwindui.com/img/ecommerce-images/shopping-cart-page-01-related-product-01.jpg',
+    imageAlt: 'Front of Billfold Wallet in natural leather.',
+    price: '$118',
+    color: 'Natural',
+  },
+  // More products...
+];
 const footerNavigation = {
-  shop: [
+  products: [
     { name: 'Bags', href: '#' },
     { name: 'Tees', href: '#' },
     { name: 'Objects', href: '#' },
@@ -185,16 +210,14 @@ const footerNavigation = {
     { name: 'Terms & Conditions', href: '#' },
     { name: 'Privacy', href: '#' },
   ],
-  account: [
-    { name: 'Manage Account', href: '#' },
-    { name: 'Returns & Exchanges', href: '#' },
-    { name: 'Redeem a Gift Card', href: '#' },
-  ],
-  connect: [
-    { name: 'Contact Us', href: '#' },
-    { name: 'Twitter', href: '#' },
-    { name: 'Instagram', href: '#' },
-    { name: 'Pinterest', href: '#' },
+  customerService: [
+    { name: 'Contact', href: '#' },
+    { name: 'Shipping', href: '#' },
+    { name: 'Returns', href: '#' },
+    { name: 'Warranty', href: '#' },
+    { name: 'Secure Payments', href: '#' },
+    { name: 'FAQ', href: '#' },
+    { name: 'Find a store', href: '#' },
   ],
 };
 
@@ -241,7 +264,7 @@ export default function Example() {
                   >
                     <span className="absolute -inset-0.5" />
                     <span className="sr-only">Close menu</span>
-                    <XMarkIcon className="h-6 w-6" aria-hidden="true" />
+                    <XMarkIconOutline className="h-6 w-6" aria-hidden="true" />
                   </button>
                 </div>
 
@@ -383,13 +406,16 @@ export default function Example() {
         </Dialog>
       </Transition.Root>
 
-      <header className="relative overflow-hidden">
-        {/* Top navigation */}
+      <header className="relative bg-white">
+        <p className="flex h-10 items-center justify-center bg-indigo-600 px-4 text-sm font-medium text-white sm:px-6 lg:px-8">
+          Get free delivery on orders over $100
+        </p>
+
         <nav
           aria-label="Top"
-          className="relative z-20 bg-white bg-opacity-90 backdrop-blur-xl backdrop-filter"
+          className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"
         >
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="border-b border-gray-200">
             <div className="flex h-16 items-center">
               <button
                 type="button"
@@ -442,26 +468,14 @@ export default function Example() {
                             leaveFrom="opacity-100"
                             leaveTo="opacity-0"
                           >
-                            <Popover.Panel className="absolute inset-x-0 top-full bg-white text-sm text-gray-500">
+                            <Popover.Panel className="absolute inset-x-0 top-full z-10 text-sm text-gray-500">
                               {/* Presentational element used to render the bottom shadow, if we put the shadow on the actual panel it pokes out the top, so we use this shorter element to hide the top of the shadow */}
                               <div
                                 className="absolute inset-0 top-1/2 bg-white shadow"
                                 aria-hidden="true"
                               />
-                              {/* Fake border when menu is open */}
-                              <div
-                                className="absolute inset-0 top-0 mx-auto h-px max-w-7xl px-8"
-                                aria-hidden="true"
-                              >
-                                <div
-                                  className={classNames(
-                                    open ? 'bg-gray-200' : 'bg-transparent',
-                                    'h-px w-full transition-colors duration-200 ease-out'
-                                  )}
-                                />
-                              </div>
 
-                              <div className="relative">
+                              <div className="relative bg-white">
                                 <div className="mx-auto max-w-7xl px-8">
                                   <div className="grid grid-cols-2 gap-x-8 gap-y-10 py-16">
                                     <div className="col-start-2 grid grid-cols-2 gap-x-8">
@@ -551,19 +565,19 @@ export default function Example() {
 
               <div className="ml-auto flex items-center">
                 <div className="hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:space-x-6">
-                  <Link
-                    href="/login"
+                  <a
+                    href="#"
                     className="text-sm font-medium text-gray-700 hover:text-gray-800"
                   >
                     Sign in
-                  </Link>
+                  </a>
                   <span className="h-6 w-px bg-gray-200" aria-hidden="true" />
-                  <Link
-                    href="/signup"
+                  <a
+                    href="#"
                     className="text-sm font-medium text-gray-700 hover:text-gray-800"
                   >
                     Create account
-                  </Link>
+                  </a>
                 </div>
 
                 <div className="hidden lg:ml-8 lg:flex">
@@ -576,7 +590,7 @@ export default function Example() {
                       alt=""
                       className="block h-auto w-5 flex-shrink-0"
                     />
-                    <span className="ml-3 block text-sm font-medium">KES</span>
+                    <span className="ml-3 block text-sm font-medium">CAD</span>
                     <span className="sr-only">, change currency</span>
                   </a>
                 </div>
@@ -609,376 +623,230 @@ export default function Example() {
             </div>
           </div>
         </nav>
-
-        {/* Hero section */}
-        <div className="pb-80 pt-16 sm:pb-40 sm:pt-24 lg:pb-48 lg:pt-40">
-          <div className="relative mx-auto max-w-7xl px-4 sm:static sm:px-6 lg:px-8">
-            <div className="sm:max-w-lg">
-              <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
-                Summer styles are finally here
-              </h1>
-              <p className="mt-4 text-xl text-gray-500">
-                This year, our new summer collection will shelter you from the
-                harsh elements of a world that doesn't care if you live or die.
-              </p>
-            </div>
-            <div>
-              <div className="mt-10">
-                {/* Decorative image grid */}
-                <div
-                  aria-hidden="true"
-                  className="pointer-events-none lg:absolute lg:inset-y-0 lg:mx-auto lg:w-full lg:max-w-7xl"
-                >
-                  <div className="absolute transform sm:left-1/2 sm:top-0 sm:translate-x-8 lg:left-1/2 lg:top-1/2 lg:-translate-y-1/2 lg:translate-x-8">
-                    <div className="flex items-center space-x-6 lg:space-x-8">
-                      <div className="grid flex-shrink-0 grid-cols-1 gap-y-6 lg:gap-y-8">
-                        <div className="h-64 w-44 overflow-hidden rounded-lg sm:opacity-0 lg:opacity-100">
-                          <img
-                            src="https://tailwindui.com/img/ecommerce-images/home-page-03-hero-image-tile-01.jpg"
-                            alt=""
-                            className="h-full w-full object-cover object-center"
-                          />
-                        </div>
-                        <div className="h-64 w-44 overflow-hidden rounded-lg">
-                          <img
-                            src="https://tailwindui.com/img/ecommerce-images/home-page-03-hero-image-tile-02.jpg"
-                            alt=""
-                            className="h-full w-full object-cover object-center"
-                          />
-                        </div>
-                      </div>
-                      <div className="grid flex-shrink-0 grid-cols-1 gap-y-6 lg:gap-y-8">
-                        <div className="h-64 w-44 overflow-hidden rounded-lg">
-                          <img
-                            src="https://tailwindui.com/img/ecommerce-images/home-page-03-hero-image-tile-03.jpg"
-                            alt=""
-                            className="h-full w-full object-cover object-center"
-                          />
-                        </div>
-                        <div className="h-64 w-44 overflow-hidden rounded-lg">
-                          <img
-                            src="https://tailwindui.com/img/ecommerce-images/home-page-03-hero-image-tile-04.jpg"
-                            alt=""
-                            className="h-full w-full object-cover object-center"
-                          />
-                        </div>
-                        <div className="h-64 w-44 overflow-hidden rounded-lg">
-                          <img
-                            src="https://tailwindui.com/img/ecommerce-images/home-page-03-hero-image-tile-05.jpg"
-                            alt=""
-                            className="h-full w-full object-cover object-center"
-                          />
-                        </div>
-                      </div>
-                      <div className="grid flex-shrink-0 grid-cols-1 gap-y-6 lg:gap-y-8">
-                        <div className="h-64 w-44 overflow-hidden rounded-lg">
-                          <img
-                            src="https://tailwindui.com/img/ecommerce-images/home-page-03-hero-image-tile-06.jpg"
-                            alt=""
-                            className="h-full w-full object-cover object-center"
-                          />
-                        </div>
-                        <div className="h-64 w-44 overflow-hidden rounded-lg">
-                          <img
-                            src="https://tailwindui.com/img/ecommerce-images/home-page-03-hero-image-tile-07.jpg"
-                            alt=""
-                            className="h-full w-full object-cover object-center"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <Link
-                  href="/summer"
-                  className="inline-block rounded-md border border-transparent bg-indigo-600 px-8 py-3 text-center font-medium text-white hover:bg-indigo-700"
-                >
-                  Shop Collection
-                </Link>
-              </div>
-            </div>
-          </div>
-        </div>
       </header>
 
-      <main>
-        {/* Category section */}
-        <section aria-labelledby="category-heading" className="bg-gray-50">
-          <div className="mx-auto max-w-7xl px-4 py-24 sm:px-6 sm:py-32 lg:px-8">
-            <div className="sm:flex sm:items-baseline sm:justify-between">
-              <h2
-                id="category-heading"
-                className="text-2xl font-bold tracking-tight text-gray-900"
-              >
-                Shop by Category
-              </h2>
-              <a
-                href="#"
-                className="hidden text-sm font-semibold text-indigo-600 hover:text-indigo-500 sm:block"
-              >
-                Browse all categories
-                <span aria-hidden="true"> &rarr;</span>
-              </a>
-            </div>
+      <main className="mx-auto max-w-2xl px-4 pb-24 pt-16 sm:px-6 lg:max-w-7xl lg:px-8">
+        <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+          Shopping Cart
+        </h1>
 
-            <div className="mt-6 grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:grid-rows-2 sm:gap-x-6 lg:gap-8">
-              <div className="group aspect-h-1 aspect-w-2 overflow-hidden rounded-lg sm:aspect-h-1 sm:aspect-w-1 sm:row-span-2">
-                <img
-                  src="https://tailwindui.com/img/ecommerce-images/home-page-03-featured-category.jpg"
-                  alt="Two models wearing women's black cotton crewneck tee and off-white cotton crewneck tee."
-                  className="object-cover object-center group-hover:opacity-75"
-                />
-                <div
-                  aria-hidden="true"
-                  className="bg-gradient-to-b from-transparent to-black opacity-50"
-                />
-                <div className="flex items-end p-6">
-                  <div>
-                    <h3 className="font-semibold text-white">
-                      <a href="#">
-                        <span className="absolute inset-0" />
-                        New Arrivals
-                      </a>
-                    </h3>
-                    <p aria-hidden="true" className="mt-1 text-sm text-white">
-                      Shop now
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div className="group aspect-h-1 aspect-w-2 overflow-hidden rounded-lg sm:aspect-none sm:relative sm:h-full">
-                <img
-                  src="https://tailwindui.com/img/ecommerce-images/home-page-03-category-01.jpg"
-                  alt="Wooden shelf with gray and olive drab green baseball caps, next to wooden clothes hanger with sweaters."
-                  className="object-cover object-center group-hover:opacity-75 sm:absolute sm:inset-0 sm:h-full sm:w-full"
-                />
-                <div
-                  aria-hidden="true"
-                  className="bg-gradient-to-b from-transparent to-black opacity-50 sm:absolute sm:inset-0"
-                />
-                <div className="flex items-end p-6 sm:absolute sm:inset-0">
-                  <div>
-                    <h3 className="font-semibold text-white">
-                      <a href="#">
-                        <span className="absolute inset-0" />
-                        Accessories
-                      </a>
-                    </h3>
-                    <p aria-hidden="true" className="mt-1 text-sm text-white">
-                      Shop now
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div className="group aspect-h-1 aspect-w-2 overflow-hidden rounded-lg sm:aspect-none sm:relative sm:h-full">
-                <img
-                  src="https://tailwindui.com/img/ecommerce-images/home-page-03-category-02.jpg"
-                  alt="Walnut desk organizer set with white modular trays, next to porcelain mug on wooden desk."
-                  className="object-cover object-center group-hover:opacity-75 sm:absolute sm:inset-0 sm:h-full sm:w-full"
-                />
-                <div
-                  aria-hidden="true"
-                  className="bg-gradient-to-b from-transparent to-black opacity-50 sm:absolute sm:inset-0"
-                />
-                <div className="flex items-end p-6 sm:absolute sm:inset-0">
-                  <div>
-                    <h3 className="font-semibold text-white">
-                      <a href="#">
-                        <span className="absolute inset-0" />
-                        Workspace
-                      </a>
-                    </h3>
-                    <p aria-hidden="true" className="mt-1 text-sm text-white">
-                      Shop now
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
+        <form className="mt-12 lg:grid lg:grid-cols-12 lg:items-start lg:gap-x-12 xl:gap-x-16">
+          <section aria-labelledby="cart-heading" className="lg:col-span-7">
+            <h2 id="cart-heading" className="sr-only">
+              Items in your shopping cart
+            </h2>
 
-            <div className="mt-6 sm:hidden">
-              <a
-                href="#"
-                className="block text-sm font-semibold text-indigo-600 hover:text-indigo-500"
-              >
-                Browse all categories
-                <span aria-hidden="true"> &rarr;</span>
-              </a>
-            </div>
-          </div>
-        </section>
-
-        {/* Featured section */}
-        <section aria-labelledby="cause-heading">
-          <div className="relative bg-gray-800 px-6 py-32 sm:px-12 sm:py-40 lg:px-16">
-            <div className="absolute inset-0 overflow-hidden">
-              <img
-                src="https://tailwindui.com/img/ecommerce-images/home-page-03-feature-section-full-width.jpg"
-                alt=""
-                className="h-full w-full object-cover object-center"
-              />
-            </div>
-            <div
-              aria-hidden="true"
-              className="absolute inset-0 bg-gray-900 bg-opacity-50"
-            />
-            <div className="relative mx-auto flex max-w-3xl flex-col items-center text-center">
-              <h2
-                id="cause-heading"
-                className="text-3xl font-bold tracking-tight text-white sm:text-4xl"
-              >
-                Long-term thinking
-              </h2>
-              <p className="mt-3 text-xl text-white">
-                We're committed to responsible, sustainable, and ethical
-                manufacturing. Our small-scale approach allows us to focus on
-                quality and reduce our impact. We're doing our best to delay the
-                inevitable heat-death of the universe.
-              </p>
-              <a
-                href="#"
-                className="mt-8 block w-full rounded-md border border-transparent bg-white px-8 py-3 text-base font-medium text-gray-900 hover:bg-gray-100 sm:w-auto"
-              >
-                Read our story
-              </a>
-            </div>
-          </div>
-        </section>
-
-        {/* Favorites section */}
-        <section aria-labelledby="favorites-heading">
-          <div className="mx-auto max-w-7xl px-4 py-24 sm:px-6 sm:py-32 lg:px-8">
-            <div className="sm:flex sm:items-baseline sm:justify-between">
-              <h2
-                id="favorites-heading"
-                className="text-2xl font-bold tracking-tight text-gray-900"
-              >
-                Our Favorites
-              </h2>
-              <a
-                href="#"
-                className="hidden text-sm font-semibold text-indigo-600 hover:text-indigo-500 sm:block"
-              >
-                Browse all favorites
-                <span aria-hidden="true"> &rarr;</span>
-              </a>
-            </div>
-
-            <div className="mt-6 grid grid-cols-1 gap-y-10 sm:grid-cols-3 sm:gap-x-6 sm:gap-y-0 lg:gap-x-8">
-              {favorites.map((favorite) => (
-                <div key={favorite.id} className="group relative">
-                  <div className="h-96 w-full overflow-hidden rounded-lg sm:aspect-h-3 sm:aspect-w-2 group-hover:opacity-75 sm:h-auto">
+            <ul
+              role="list"
+              className="divide-y divide-gray-200 border-b border-t border-gray-200"
+            >
+              {products.map((product, productIdx) => (
+                <li key={product.id} className="flex py-6 sm:py-10">
+                  <div className="flex-shrink-0">
                     <img
-                      src={favorite.imageSrc}
-                      alt={favorite.imageAlt}
-                      className="h-full w-full object-cover object-center"
+                      src={product.imageSrc}
+                      alt={product.imageAlt}
+                      className="h-24 w-24 rounded-md object-cover object-center sm:h-48 sm:w-48"
                     />
                   </div>
-                  <h3 className="mt-4 text-base font-semibold text-gray-900">
-                    <a href={favorite.href}>
-                      <span className="absolute inset-0" />
-                      {favorite.name}
-                    </a>
-                  </h3>
-                  <p className="mt-1 text-sm text-gray-500">{favorite.price}</p>
-                </div>
+
+                  <div className="ml-4 flex flex-1 flex-col justify-between sm:ml-6">
+                    <div className="relative pr-9 sm:grid sm:grid-cols-2 sm:gap-x-6 sm:pr-0">
+                      <div>
+                        <div className="flex justify-between">
+                          <h3 className="text-sm">
+                            <a
+                              href={product.href}
+                              className="font-medium text-gray-700 hover:text-gray-800"
+                            >
+                              {product.name}
+                            </a>
+                          </h3>
+                        </div>
+                        <div className="mt-1 flex text-sm">
+                          <p className="text-gray-500">{product.color}</p>
+                          {product.size ? (
+                            <p className="ml-4 border-l border-gray-200 pl-4 text-gray-500">
+                              {product.size}
+                            </p>
+                          ) : null}
+                        </div>
+                        <p className="mt-1 text-sm font-medium text-gray-900">
+                          {product.price}
+                        </p>
+                      </div>
+
+                      <div className="mt-4 sm:mt-0 sm:pr-9">
+                        <label
+                          htmlFor={`quantity-${productIdx}`}
+                          className="sr-only"
+                        >
+                          Quantity, {product.name}
+                        </label>
+                        <select
+                          id={`quantity-${productIdx}`}
+                          name={`quantity-${productIdx}`}
+                          className="max-w-full rounded-md border border-gray-300 py-1.5 text-left text-base font-medium leading-5 text-gray-700 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm"
+                        >
+                          <option value={1}>1</option>
+                          <option value={2}>2</option>
+                          <option value={3}>3</option>
+                          <option value={4}>4</option>
+                          <option value={5}>5</option>
+                          <option value={6}>6</option>
+                          <option value={7}>7</option>
+                          <option value={8}>8</option>
+                        </select>
+
+                        <div className="absolute right-0 top-0">
+                          <button
+                            type="button"
+                            className="-m-2 inline-flex p-2 text-gray-400 hover:text-gray-500"
+                          >
+                            <span className="sr-only">Remove</span>
+                            <XMarkIconMini
+                              className="h-5 w-5"
+                              aria-hidden="true"
+                            />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <p className="mt-4 flex space-x-2 text-sm text-gray-700">
+                      {product.inStock ? (
+                        <CheckIcon
+                          className="h-5 w-5 flex-shrink-0 text-green-500"
+                          aria-hidden="true"
+                        />
+                      ) : (
+                        <ClockIcon
+                          className="h-5 w-5 flex-shrink-0 text-gray-300"
+                          aria-hidden="true"
+                        />
+                      )}
+
+                      <span>
+                        {product.inStock
+                          ? 'In stock'
+                          : `Ships in ${product.leadTime}`}
+                      </span>
+                    </p>
+                  </div>
+                </li>
               ))}
-            </div>
+            </ul>
+          </section>
 
-            <div className="mt-6 sm:hidden">
-              <a
-                href="#"
-                className="block text-sm font-semibold text-indigo-600 hover:text-indigo-500"
+          {/* Order summary */}
+          <section
+            aria-labelledby="summary-heading"
+            className="mt-16 rounded-lg bg-gray-50 px-4 py-6 sm:p-6 lg:col-span-5 lg:mt-0 lg:p-8"
+          >
+            <h2
+              id="summary-heading"
+              className="text-lg font-medium text-gray-900"
+            >
+              Order summary
+            </h2>
+
+            <dl className="mt-6 space-y-4">
+              <div className="flex items-center justify-between">
+                <dt className="text-sm text-gray-600">Subtotal</dt>
+                <dd className="text-sm font-medium text-gray-900">$99.00</dd>
+              </div>
+              <div className="flex items-center justify-between border-t border-gray-200 pt-4">
+                <dt className="flex items-center text-sm text-gray-600">
+                  <span>Shipping estimate</span>
+                  <a
+                    href="#"
+                    className="ml-2 flex-shrink-0 text-gray-400 hover:text-gray-500"
+                  >
+                    <span className="sr-only">
+                      Learn more about how shipping is calculated
+                    </span>
+                    <QuestionMarkCircleIcon
+                      className="h-5 w-5"
+                      aria-hidden="true"
+                    />
+                  </a>
+                </dt>
+                <dd className="text-sm font-medium text-gray-900">$5.00</dd>
+              </div>
+              <div className="flex items-center justify-between border-t border-gray-200 pt-4">
+                <dt className="flex text-sm text-gray-600">
+                  <span>Tax estimate</span>
+                  <a
+                    href="#"
+                    className="ml-2 flex-shrink-0 text-gray-400 hover:text-gray-500"
+                  >
+                    <span className="sr-only">
+                      Learn more about how tax is calculated
+                    </span>
+                    <QuestionMarkCircleIcon
+                      className="h-5 w-5"
+                      aria-hidden="true"
+                    />
+                  </a>
+                </dt>
+                <dd className="text-sm font-medium text-gray-900">$8.32</dd>
+              </div>
+              <div className="flex items-center justify-between border-t border-gray-200 pt-4">
+                <dt className="text-base font-medium text-gray-900">
+                  Order total
+                </dt>
+                <dd className="text-base font-medium text-gray-900">$112.32</dd>
+              </div>
+            </dl>
+
+            <div className="mt-6">
+              <button
+                type="submit"
+                className="w-full rounded-md border border-transparent bg-indigo-600 px-4 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50"
               >
-                Browse all favorites
-                <span aria-hidden="true"> &rarr;</span>
-              </a>
+                Checkout
+              </button>
             </div>
-          </div>
-        </section>
+          </section>
+        </form>
 
-        {/* CTA section */}
-        <section aria-labelledby="sale-heading">
-          <div className="overflow-hidden pt-32 sm:pt-14">
-            <div className="bg-gray-800">
-              <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                <div className="relative pb-16 pt-48 sm:pb-24">
+        {/* Related products */}
+        <section aria-labelledby="related-heading" className="mt-24">
+          <h2
+            id="related-heading"
+            className="text-lg font-medium text-gray-900"
+          >
+            You may also like&hellip;
+          </h2>
+
+          <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
+            {relatedProducts.map((relatedProduct) => (
+              <div key={relatedProduct.id} className="group relative">
+                <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md lg:aspect-none group-hover:opacity-75 lg:h-80">
+                  <img
+                    src={relatedProduct.imageSrc}
+                    alt={relatedProduct.imageAlt}
+                    className="h-full w-full object-cover object-center lg:h-full lg:w-full"
+                  />
+                </div>
+                <div className="mt-4 flex justify-between">
                   <div>
-                    <h2
-                      id="sale-heading"
-                      className="text-4xl font-bold tracking-tight text-white md:text-5xl"
-                    >
-                      Final Stock.
-                      <br />
-                      Up to 50% off.
-                    </h2>
-                    <div className="mt-6 text-base">
-                      <a href="#" className="font-semibold text-white">
-                        Shop the sale
-                        <span aria-hidden="true"> &rarr;</span>
+                    <h3 className="text-sm text-gray-700">
+                      <a href={relatedProduct.href}>
+                        <span aria-hidden="true" className="absolute inset-0" />
+                        {relatedProduct.name}
                       </a>
-                    </div>
+                    </h3>
+                    <p className="mt-1 text-sm text-gray-500">
+                      {relatedProduct.color}
+                    </p>
                   </div>
-
-                  <div className="absolute -top-32 left-1/2 -translate-x-1/2 transform sm:top-6 sm:translate-x-0">
-                    <div className="ml-24 flex min-w-max space-x-6 sm:ml-3 lg:space-x-8">
-                      <div className="flex space-x-6 sm:flex-col sm:space-x-0 sm:space-y-6 lg:space-y-8">
-                        <div className="flex-shrink-0">
-                          <img
-                            className="h-64 w-64 rounded-lg object-cover md:h-72 md:w-72"
-                            src="https://tailwindui.com/img/ecommerce-images/home-page-03-category-01.jpg"
-                            alt=""
-                          />
-                        </div>
-
-                        <div className="mt-6 flex-shrink-0 sm:mt-0">
-                          <img
-                            className="h-64 w-64 rounded-lg object-cover md:h-72 md:w-72"
-                            src="https://tailwindui.com/img/ecommerce-images/home-page-03-category-02.jpg"
-                            alt=""
-                          />
-                        </div>
-                      </div>
-                      <div className="flex space-x-6 sm:-mt-20 sm:flex-col sm:space-x-0 sm:space-y-6 lg:space-y-8">
-                        <div className="flex-shrink-0">
-                          <img
-                            className="h-64 w-64 rounded-lg object-cover md:h-72 md:w-72"
-                            src="https://tailwindui.com/img/ecommerce-images/home-page-03-favorite-01.jpg"
-                            alt=""
-                          />
-                        </div>
-
-                        <div className="mt-6 flex-shrink-0 sm:mt-0">
-                          <img
-                            className="h-64 w-64 rounded-lg object-cover md:h-72 md:w-72"
-                            src="https://tailwindui.com/img/ecommerce-images/home-page-03-favorite-02.jpg"
-                            alt=""
-                          />
-                        </div>
-                      </div>
-                      <div className="flex space-x-6 sm:flex-col sm:space-x-0 sm:space-y-6 lg:space-y-8">
-                        <div className="flex-shrink-0">
-                          <img
-                            className="h-64 w-64 rounded-lg object-cover md:h-72 md:w-72"
-                            src="https://tailwindui.com/img/ecommerce-images/home-page-03-category-01.jpg"
-                            alt=""
-                          />
-                        </div>
-
-                        <div className="mt-6 flex-shrink-0 sm:mt-0">
-                          <img
-                            className="h-64 w-64 rounded-lg object-cover md:h-72 md:w-72"
-                            src="https://tailwindui.com/img/ecommerce-images/home-page-03-category-02.jpg"
-                            alt=""
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                  <p className="text-sm font-medium text-gray-900">
+                    {relatedProduct.price}
+                  </p>
                 </div>
               </div>
-            </div>
+            ))}
           </div>
         </section>
       </main>
@@ -988,106 +856,109 @@ export default function Example() {
           Footer
         </h2>
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="py-20 xl:grid xl:grid-cols-3 xl:gap-8">
-            <div className="grid grid-cols-2 gap-8 xl:col-span-2">
-              <div className="space-y-16 md:grid md:grid-cols-2 md:gap-8 md:space-y-0">
-                <div>
-                  <h3 className="text-sm font-medium text-gray-900">Shop</h3>
-                  <ul role="list" className="mt-6 space-y-6">
-                    {footerNavigation.shop.map((item) => (
-                      <li key={item.name} className="text-sm">
-                        <a
-                          href={item.href}
-                          className="text-gray-500 hover:text-gray-600"
-                        >
-                          {item.name}
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                <div>
-                  <h3 className="text-sm font-medium text-gray-900">Company</h3>
-                  <ul role="list" className="mt-6 space-y-6">
-                    {footerNavigation.company.map((item) => (
-                      <li key={item.name} className="text-sm">
-                        <a
-                          href={item.href}
-                          className="text-gray-500 hover:text-gray-600"
-                        >
-                          {item.name}
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-              <div className="space-y-16 md:grid md:grid-cols-2 md:gap-8 md:space-y-0">
-                <div>
-                  <h3 className="text-sm font-medium text-gray-900">Account</h3>
-                  <ul role="list" className="mt-6 space-y-6">
-                    {footerNavigation.account.map((item) => (
-                      <li key={item.name} className="text-sm">
-                        <a
-                          href={item.href}
-                          className="text-gray-500 hover:text-gray-600"
-                        >
-                          {item.name}
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                <div>
-                  <h3 className="text-sm font-medium text-gray-900">Connect</h3>
-                  <ul role="list" className="mt-6 space-y-6">
-                    {footerNavigation.connect.map((item) => (
-                      <li key={item.name} className="text-sm">
-                        <a
-                          href={item.href}
-                          className="text-gray-500 hover:text-gray-600"
-                        >
-                          {item.name}
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            </div>
-            <div className="mt-16 md:mt-16 xl:mt-0">
-              <h3 className="text-sm font-medium text-gray-900">
-                Sign up for our newsletter
-              </h3>
-              <p className="mt-6 text-sm text-gray-500">
-                The latest deals and savings, sent to your inbox weekly.
-              </p>
-              <form className="mt-2 flex sm:max-w-md">
-                <label htmlFor="email-address" className="sr-only">
-                  Email address
-                </label>
-                <input
-                  id="email-address"
-                  type="text"
-                  autoComplete="email"
-                  required
-                  className="w-full min-w-0 appearance-none rounded-md border border-gray-300 bg-white px-4 py-2 text-base text-indigo-500 placeholder-gray-500 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+          <div className="border-t border-gray-200 py-20">
+            <div className="grid grid-cols-1 md:grid-flow-col md:auto-rows-min md:grid-cols-12 md:gap-x-8 md:gap-y-16">
+              {/* Image section */}
+              <div className="col-span-1 md:col-span-2 lg:col-start-1 lg:row-start-1">
+                <img
+                  src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
+                  alt=""
+                  className="h-8 w-auto"
                 />
-                <div className="ml-4 flex-shrink-0">
-                  <button
-                    type="submit"
-                    className="flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                  >
-                    Sign up
-                  </button>
+              </div>
+
+              {/* Sitemap sections */}
+              <div className="col-span-6 mt-10 grid grid-cols-2 gap-8 sm:grid-cols-3 md:col-span-8 md:col-start-3 md:row-start-1 md:mt-0 lg:col-span-6 lg:col-start-2">
+                <div className="grid grid-cols-1 gap-y-12 sm:col-span-2 sm:grid-cols-2 sm:gap-x-8">
+                  <div>
+                    <h3 className="text-sm font-medium text-gray-900">
+                      Products
+                    </h3>
+                    <ul role="list" className="mt-6 space-y-6">
+                      {footerNavigation.products.map((item) => (
+                        <li key={item.name} className="text-sm">
+                          <a
+                            href={item.href}
+                            className="text-gray-500 hover:text-gray-600"
+                          >
+                            {item.name}
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-medium text-gray-900">
+                      Company
+                    </h3>
+                    <ul role="list" className="mt-6 space-y-6">
+                      {footerNavigation.company.map((item) => (
+                        <li key={item.name} className="text-sm">
+                          <a
+                            href={item.href}
+                            className="text-gray-500 hover:text-gray-600"
+                          >
+                            {item.name}
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
-              </form>
+                <div>
+                  <h3 className="text-sm font-medium text-gray-900">
+                    Customer Service
+                  </h3>
+                  <ul role="list" className="mt-6 space-y-6">
+                    {footerNavigation.customerService.map((item) => (
+                      <li key={item.name} className="text-sm">
+                        <a
+                          href={item.href}
+                          className="text-gray-500 hover:text-gray-600"
+                        >
+                          {item.name}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+
+              {/* Newsletter section */}
+              <div className="mt-12 md:col-span-8 md:col-start-3 md:row-start-2 md:mt-0 lg:col-span-4 lg:col-start-9 lg:row-start-1">
+                <h3 className="text-sm font-medium text-gray-900">
+                  Sign up for our newsletter
+                </h3>
+                <p className="mt-6 text-sm text-gray-500">
+                  The latest deals and savings, sent to your inbox weekly.
+                </p>
+                <form className="mt-2 flex sm:max-w-md">
+                  <label htmlFor="email-address" className="sr-only">
+                    Email address
+                  </label>
+                  <input
+                    id="email-address"
+                    type="text"
+                    autoComplete="email"
+                    required
+                    className="w-full min-w-0 appearance-none rounded-md border border-gray-300 bg-white px-4 py-2 text-base text-gray-900 placeholder-gray-500 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                  />
+                  <div className="ml-4 flex-shrink-0">
+                    <button
+                      type="submit"
+                      className="flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                    >
+                      Sign up
+                    </button>
+                  </div>
+                </form>
+              </div>
             </div>
           </div>
 
-          <div className="border-t border-gray-200 py-10">
+          <div className="border-t border-gray-100 py-10 text-center">
             <p className="text-sm text-gray-500">
-              Copyright &copy; 2021 Your Company, Inc.
+              &copy; 2021 Your Company, Inc. All rights reserved.
             </p>
           </div>
         </div>

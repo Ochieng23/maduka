@@ -15,7 +15,9 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@ecommerce/lib": ["lib/src/index.ts"]
+      "@ecommerce/axios": ["libs/axios/src/index.ts"],
+      "@ecommerce/hooks": ["libs/hooks/src/index.ts"],
+      "@ecommerce/ui-components": ["libs/ui-components/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

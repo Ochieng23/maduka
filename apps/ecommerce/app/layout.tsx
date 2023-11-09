@@ -1,4 +1,6 @@
 import './global.css';
+import Navbar from '../../../libs/ui-components/src/lib/navigation'
+import Footer from '../../../libs/ui-components/src/lib/footer'
 import { AuthContextProvider } from './(auth)/components/context';
 export const metadata = {
   title: 'Welcome to ecommerce',
@@ -12,9 +14,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <AuthContextProvider>
-        <body>{children}</body>
-      </AuthContextProvider>
+    
+        <body>
+          <header> <Navbar/></header>
+          <main>{children}</main>
+          <Footer/>
+          </body>
+         
     </html>
   );
 }

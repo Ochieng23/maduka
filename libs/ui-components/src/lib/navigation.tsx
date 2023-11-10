@@ -1,5 +1,5 @@
 'use client';
-import { Fragment, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { Dialog, Popover, Tab, Transition } from '@headlessui/react';
 import {
   Bars3Icon,
@@ -138,12 +138,32 @@ const navigation = {
   ],
 };
 
-function classNames(...classes) {
+// const getCartFromLocalStorage = () => {
+//   try {
+//     const storedCart = JSON.parse(localStorage.getItem('cart')) || [];
+
+//     return storedCart;
+//   } catch (error) {
+//     console.log(storedCart)
+//     console.error('Error fetching cart from localStorage:', error);
+//     return [];
+//   }
+
+// };
+
+function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ');
 }
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
+  const [cart, setCart] = useState([]);
+
+  useEffect(() => {
+    const storedCart = JSON.parse(localStorage.getItem('cart') || '[]');
+    setCart(storedCart);
+    console.log(storedCart);
+  }, []);
 
   return (
     <div className="bg-white">
@@ -531,7 +551,7 @@ export default function Navbar() {
                       aria-hidden="true"
                     />
                     <span className="ml-2 text-sm font-medium text-gray-700 group-hover:text-gray-800">
-                      0
+                      {cart.length}
                     </span>
                     <span className="sr-only">items in cart, view bag</span>
                   </a>

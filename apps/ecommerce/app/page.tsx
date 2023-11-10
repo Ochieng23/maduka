@@ -198,7 +198,8 @@ const footerNavigation = {
   ],
 };
 
-function classNames(...classes) {
+// Assuming this is your classNames function
+function classNames(...classes: (string | undefined | null | false)[]): string {
   return classes.filter(Boolean).join(' ');
 }
 

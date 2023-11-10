@@ -4,19 +4,25 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
 interface Product {
+  brand: string;
+  category: string;
+  description: string;
+  discountPercentage: number;
   id: number;
-  title: string;
+  images: string[];
   price: number;
-  image: string;
-  imageAlt: string;
+  rating: number;
+  stock: number;
+  thumbnail: string;
+  title: string;
 }
 export default function Example() {
-  const [summer, setSummer] = useState([]);
+  const [summer, setSummer] = useState<Product[]>([]);
 
   useEffect(() => {
     fetch('https://dummyjson.com/products')
       .then((res) => res.json())
-      .then((json: Product[]) => setSummer(json.products as Product[]));
+      .then((json: { products: Product[] }) => setSummer(json.products));
   }, []);
 
   console.log(summer);
@@ -39,7 +45,7 @@ export default function Example() {
                   <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-lg bg-gray-200 xl:aspect-h-8 xl:aspect-w-7">
                     <img
                       src={product.images?.[0]}
-                      alt={product.imageAlt}
+                    
                       className="h-full w-full object-cover object-center group-hover:opacity-75"
                     />
                   </div>

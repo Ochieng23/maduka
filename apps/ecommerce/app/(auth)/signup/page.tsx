@@ -8,7 +8,7 @@ function Page() {
   const [password, setPassword] = React.useState('');
   const router = useRouter();
 
-  const handleForm = async (event) => {
+  const handleForm = async (event: React.FormEvent) => {
     event.preventDefault();
 
     const { result, error } = await signUp(email, password);

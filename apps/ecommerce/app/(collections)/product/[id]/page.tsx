@@ -1,5 +1,6 @@
 'use client';
 import { Fragment, useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   Dialog,
   Popover,
@@ -20,69 +21,76 @@ import { StarIcon } from '@heroicons/react/20/solid';
 import { useParams } from 'next/navigation';
 
 const policies = [
-    {
-      name: 'International delivery',
-      icon: GlobeAmericasIcon,
-      description: 'Get your order in 2 years',
-    },
-    {
-      name: 'Loyalty rewards',
-      icon: CurrencyDollarIcon,
-      description: "Don't look at other tees",
-    },
-  ];
+  {
+    name: 'International delivery',
+    icon: GlobeAmericasIcon,
+    description: 'Get your order in 2 years',
+  },
+  {
+    name: 'Loyalty rewards',
+    icon: CurrencyDollarIcon,
+    description: "Don't look at other tees",
+  },
+];
 
-  const product = {
-    name: 'Basic Tee',
-    price: '$35',
-    href: '#',
-    breadcrumbs: [
-      { id: 1, name: 'Women', href: '#' },
-      { id: 2, name: 'Clothing', href: '#' },
-    ],
-    images: [
-      {
-        id: 1,
-        imageSrc: 'https://tailwindui.com/img/ecommerce-images/product-page-01-featured-product-shot.jpg',
-        imageAlt: "Back of women's Basic Tee in black.",
-        primary: true,
-      },
-      {
-        id: 2,
-        imageSrc: 'https://tailwindui.com/img/ecommerce-images/product-page-01-product-shot-01.jpg',
-        imageAlt: "Side profile of women's Basic Tee in black.",
-        primary: false,
-      },
-      {
-        id: 3,
-        imageSrc: 'https://tailwindui.com/img/ecommerce-images/product-page-01-product-shot-02.jpg',
-        imageAlt: "Front of women's Basic Tee in black.",
-        primary: false,
-      },
-    ],
-    colors: [
-      { name: 'Black', bgColor: 'bg-gray-900', selectedColor: 'ring-gray-900' },
-      { name: 'Heather Grey', bgColor: 'bg-gray-400', selectedColor: 'ring-gray-400' },
-    ],
-    sizes: [
-      { name: 'XXS', inStock: true },
-      { name: 'XS', inStock: true },
-      { name: 'S', inStock: true },
-      { name: 'M', inStock: true },
-      { name: 'L', inStock: true },
-      { name: 'XL', inStock: false },
-    ],
-    description: `
+const product = {
+  name: 'Basic Tee',
+  price: '$35',
+  href: '#',
+  breadcrumbs: [
+    { id: 1, name: 'Women', href: '#' },
+    { id: 2, name: 'Clothing', href: '#' },
+  ],
+  images: [
+    {
+      id: 1,
+      imageSrc:
+        'https://tailwindui.com/img/ecommerce-images/product-page-01-featured-product-shot.jpg',
+      imageAlt: "Back of women's Basic Tee in black.",
+      primary: true,
+    },
+    {
+      id: 2,
+      imageSrc:
+        'https://tailwindui.com/img/ecommerce-images/product-page-01-product-shot-01.jpg',
+      imageAlt: "Side profile of women's Basic Tee in black.",
+      primary: false,
+    },
+    {
+      id: 3,
+      imageSrc:
+        'https://tailwindui.com/img/ecommerce-images/product-page-01-product-shot-02.jpg',
+      imageAlt: "Front of women's Basic Tee in black.",
+      primary: false,
+    },
+  ],
+  colors: [
+    { name: 'Black', bgColor: 'bg-gray-900', selectedColor: 'ring-gray-900' },
+    {
+      name: 'Heather Grey',
+      bgColor: 'bg-gray-400',
+      selectedColor: 'ring-gray-400',
+    },
+  ],
+  sizes: [
+    { name: 'XXS', inStock: true },
+    { name: 'XS', inStock: true },
+    { name: 'S', inStock: true },
+    { name: 'M', inStock: true },
+    { name: 'L', inStock: true },
+    { name: 'XL', inStock: false },
+  ],
+  description: `
       <p>The Basic tee is an honest new take on a classic. The tee uses super soft, pre-shrunk cotton for true comfort and a dependable fit. They are hand cut and sewn locally, with a special dye technique that gives each tee it's own look.</p>
       <p>Looking to stock your closet? The Basic tee also comes in a 3-pack or 5-pack at a bundle discount.</p>
     `,
-    details: [
-      'Only the best materials',
-      'Ethically and locally made',
-      'Pre-washed and pre-shrunk',
-      'Machine wash cold with similar colors',
-    ],
-  }
+  details: [
+    'Only the best materials',
+    'Ethically and locally made',
+    'Pre-washed and pre-shrunk',
+    'Machine wash cold with similar colors',
+  ],
+};
 const reviews = {
   average: 3.9,
   totalCount: 512,
@@ -102,6 +110,9 @@ const reviews = {
     // More reviews...
   ],
 };
+
+// ... rest of your code
+
 const relatedProducts = [
   {
     id: 1,
@@ -116,25 +127,110 @@ const relatedProducts = [
   // More products...
 ];
 
+interface Product {
+  brand: string;
+  category: string;
+  description: string;
+  discountPercentage: number;
+  id: number;
+  images: string[];
+  price: number;
+  rating: number;
+  stock: number;
+  thumbnail: string;
+  title: string;
+}
+// type CartItem = {
+//   id: number;
+//   // Add other properties as needed
+//   quantity?: number;
+// };
 
-function classNames(...classes) {
+// Update the classNames function with TypeScript type annotations
+function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ');
 }
 
+// Rest of your component code...
+
 export default function Example() {
- 
+  const [cart, setCart] = useState<{ id: number }[]>([]);
+  const router = useRouter();
   const [selectedColor, setSelectedColor] = useState(product.colors[0]);
   const [selectedSize, setSelectedSize] = useState(product.sizes[2]);
-  const [products, setProducts] = useState(null);
+  const [merch, setMerch] = useState<Product | null>(null);
   const params = useParams();
   console.log(params);
 
+  // ... rest of your code
+
   useEffect(() => {
-    fetch(`https://dummyjson.com/products/${params.id}`)
-      .then((res) => res.json())
-      .then((data) => setProducts(data));
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          `https://dummyjson.com/products/${params.id}`
+        );
+        const data: Product = await response.json(); // Adjust the type here
+        setMerch(data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, [params.id]);
+
+  console.log(merch);
+
+  useEffect(() => {
+    const storedCart = JSON.parse(localStorage.getItem('cart') || '[]');
+    setCart(storedCart);
   }, []);
-  console.log(products);
+
+  const updateAndSaveCart = (updatedCart: { id: number }[]) => {
+    setCart(updatedCart as never[]);
+    localStorage.setItem('cart', JSON.stringify(updatedCart));
+  };
+  type CartItem = {
+    id: number;
+    quantity: number; // Ensure 'quantity' property is defined
+    // Add other properties as needed
+  };
+
+  // Use Map for better performance
+  const cartMap = new Map<number, CartItem>();
+
+  function isCartItemWithQuantity(
+    item: CartItem | { id: number; quantity?: unknown }
+  ): boolean {
+    return typeof item.quantity === 'number' && item.quantity > 0;
+  }
+
+  function addToCart(item: Product | null) {
+    if (!item) {
+      // Handle the case when there is no product data
+      console.error('Cannot add to cart. Product data is null.');
+      return;
+    }
+
+    if (cartMap.has(item.id)) {
+      const existingCartItem = cartMap.get(item.id)!;
+      if (isCartItemWithQuantity(existingCartItem)) {
+        existingCartItem.quantity++;
+      } else {
+        existingCartItem.quantity = 1;
+      }
+    } else {
+      // Initialize quantity to 1 for new items
+      const newItem: CartItem = { ...item, quantity: 1 };
+      cartMap.set(newItem.id, newItem);
+    }
+
+    // Convert Map values to an array before updating and saving the cart
+    const updatedCart = Array.from(cartMap.values());
+    updateAndSaveCart(updatedCart);
+  }
+
   return (
     <>
       <main className="mx-auto mt-8 max-w-2xl px-4 pb-16 sm:px-6 sm:pb-24 lg:max-w-7xl lg:px-8">
@@ -142,10 +238,10 @@ export default function Example() {
           <div className="lg:col-span-5 lg:col-start-8">
             <div className="flex justify-between">
               <h1 className="text-xl font-medium text-gray-900">
-                {products && products.title}
+                {merch && (merch as Product).title}
               </h1>
               <p className="text-xl font-medium text-gray-900">
-                {products && products.price}
+                {merch && (merch as Product).title}
               </p>
             </div>
             {/* Reviews */}
@@ -190,19 +286,24 @@ export default function Example() {
             <h2 className="sr-only">Images</h2>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 lg:grid-rows-3 lg:gap-8">
-              {products && products.images.map((image,index) => (
-                <img
-                  key={index}
-                  src={image}
-                  alt={`Image ${index + 1}`}
-                  className={classNames(
-                    image.primary
-                      ? 'lg:col-span-2 lg:row-span-2'
-                      : 'hidden lg:block',
-                    'rounded-lg'
-                  )}
-                />
-              ))}
+              {merch &&
+                merch.images.map((image, index) => (
+                  <img
+                    key={index}
+                    src={image}
+                    alt={`Image ${index + 1}`}
+                    className={classNames(
+                      'rounded-lg',
+                      // Show on large screens
+                      'lg:block',
+                      // Show on medium screens and hide on small screens
+                      'md:hidden',
+                      // Show on small screens and hide on medium screens
+                      'sm:hidden'
+                      // Span two columns and two rows for the primary image on large screens
+                    )}
+                  />
+                ))}
             </div>
           </div>
 
@@ -301,6 +402,7 @@ export default function Example() {
               </div>
 
               <button
+                onClick={() => addToCart(merch)}
                 type="submit"
                 className="mt-8 flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 px-8 py-3 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
               >
@@ -315,7 +417,10 @@ export default function Example() {
               <div
                 className="prose prose-sm mt-4 text-gray-500"
                 dangerouslySetInnerHTML={{
-                  __html: products && products.description,
+                  __html:
+                    merch && merch.description !== null
+                      ? merch.description
+                      : '',
                 }}
               />
             </div>
@@ -468,9 +573,6 @@ export default function Example() {
           </div>
         </section>
       </main>
-
-      
-    
     </>
   );
 }

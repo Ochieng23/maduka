@@ -222,7 +222,7 @@ export default function Example() {
               </h1>
               <p className="mt-4 text-xl text-gray-500">
                 This year, our new summer collection will shelter you from the
-                harsh elements of a world that doesn't care if you live or die.
+                harsh elements of a world that does not care if you live or die.
               </p>
             </div>
             <div>
@@ -434,10 +434,10 @@ export default function Example() {
                 Long-term thinking
               </h2>
               <p className="mt-3 text-xl text-white">
-                We're committed to responsible, sustainable, and ethical
+                We are committed to responsible, sustainable, and ethical
                 manufacturing. Our small-scale approach allows us to focus on
-                quality and reduce our impact. We're doing our best to delay the
-                inevitable heat-death of the universe.
+                quality and reduce our impact. We are doing our best to delay
+                the inevitable heat-death of the universe.
               </p>
               <a
                 href="#"

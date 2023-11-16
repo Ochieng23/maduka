@@ -2,7 +2,9 @@
   "name": "@ecommerce/source",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "build": "nx build ecommerce"
+  },
   "private": true,
   "dependencies": {
     "@headlessui/react": "^1.7.17",

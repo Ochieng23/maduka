@@ -22,7 +22,7 @@
       "executor": "@nx/next:server",
       "defaultConfiguration": "development",
       "options": {
-        "buildTarget": "ecommerce:build",
+        "buildTarget": "ecommerce:build:development",
         "dev": true
       },
       "configurations": {

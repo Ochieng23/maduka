@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "build": "next build",
+    "build": "npx nx run ecommerce:build:production",
     "clean": "rm -rf .next"
   },
   "private": true,

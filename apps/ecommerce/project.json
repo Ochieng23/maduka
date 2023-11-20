@@ -9,7 +9,7 @@
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
-        "outputPath": "dist/apps/ecommerce" 
+        "outputPath": "dist/apps/ecommerce"
       },
       "configurations": {
         "development": {
@@ -22,13 +22,15 @@
       "executor": "@nx/next:server",
       "defaultConfiguration": "development",
       "options": {
-        "buildTarget": "ecommerce:build:development",
-        "dev": true
+        "buildTarget": "ecommerce:build",
+        "dev": true,
+        "postcssConfig": "apps/bajjtech-ui/postcss.config.js"
       },
       "configurations": {
         "development": {
           "buildTarget": "ecommerce:build:development",
-          "dev": true
+          "dev": true,
+          "port": 3000
         },
         "production": {
           "buildTarget": "ecommerce:build:production",
@@ -57,7 +59,7 @@
       }
     },
     "lint": {
-      "executor": "@nx/eslint:lint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["apps/ecommerce/**/*.{ts,tsx,js,jsx}"]

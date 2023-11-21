@@ -1,27 +1,36 @@
+
 {
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
+  "tasksRunnerOptions": {
+    "default": {
+      "runner": "nx-cloud",
+      "options": {
+        "cacheableOperations": ["build", "lint", "test", "e2e"],
+        "accessToken": "MDM5Mjg2ZjEtODBkZS00Yzg1LWIxODgtYzQ4MzkwYmViYmJmfHJlYWQtd3JpdGU="
+      }
+    }
+  },
+  "workspaceLayout": {
+    "projectNameAndRootFormat": "as-provided"
+  },
   "targetDefaults": {
     "build": {
-      "cache": true,
       "dependsOn": ["^build"],
       "inputs": ["production", "^production"]
     },
+    "test": {
+      "inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"]
+    },
+    "e2e": {
+      "inputs": ["default", "^production"]
+    },
     "lint": {
-      "cache": true,
       "inputs": [
         "default",
         "{workspaceRoot}/.eslintrc.json",
         "{workspaceRoot}/.eslintignore",
         "{workspaceRoot}/eslint.config.js"
       ]
-    },
-    "test": {
-      "cache": true,
-      "inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"]
-    },
-    "e2e": {
-      "cache": true,
-      "inputs": ["default", "^production"]
     }
   },
   "namedInputs": {
@@ -53,6 +62,5 @@
         "linter": "eslint"
       }
     }
-  },
-  "nxCloudAccessToken": "MDM5Mjg2ZjEtODBkZS00Yzg1LWIxODgtYzQ4MzkwYmViYmJmfHJlYWQtd3JpdGU="
+  }
 }

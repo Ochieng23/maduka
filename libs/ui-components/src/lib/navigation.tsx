@@ -1,4 +1,5 @@
 'use client';
+import * as React from 'react';
 import { Fragment, useEffect, useState } from 'react';
 import { Dialog, Popover, Tab, Transition } from '@headlessui/react';
 import {
@@ -7,7 +8,57 @@ import {
   ShoppingBagIcon,
   XMarkIcon,
 } from '@heroicons/react/24/outline';
+
 import Image from 'next/image';
+import Link from 'next/link';
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+  navigationMenuTriggerStyle,
+} from '../ui/navigation-menu';
+import { cn } from '../utils';
+
+const components: { title: string; href: string; description: string }[] = [
+  {
+    title: 'Dresses',
+    href: '/docs/primitives/alert-dialog',
+    description:
+      'A modal dialog that interrupts the user with important content and expects a response.',
+  },
+  {
+    title: 'Tops',
+    href: '/docs/primitives/hover-card',
+    description:
+      'For sighted users to preview content available behind a link.',
+  },
+  {
+    title: 'Jeans',
+    href: '/docs/primitives/progress',
+    description:
+      'Displays an indicator showing the completion progress of a task, typically displayed as a progress bar.',
+  },
+  {
+    title: 'Jackets',
+    href: '/docs/primitives/scroll-area',
+    description: 'Visually or semantically separates content.',
+  },
+  {
+    title: 'Sweaters',
+    href: '/docs/primitives/tabs',
+    description:
+      'A set of layered sections of content—known as tab panels—that are displayed one at a time.',
+  },
+  {
+    title: 'Accessories',
+    href: '/docs/primitives/tooltip',
+    description:
+      'A popup that displays information related to an element when the element receives keyboard focus or the mouse hovers over it.',
+  },
+];
 
 const navigation = {
   categories: [
@@ -230,13 +281,13 @@ export default function Navbar() {
                     {navigation.categories.map((category) => (
                       <Tab.Panel
                         key={category.name}
-                        className="space-y-10 px-4 pb-8 pt-10"
+                        className="space-y-10 px-4 pb-8 pt-10  "
                       >
                         <div className="grid grid-cols-2 gap-x-4">
                           {category.featured.map((item) => (
                             <div
                               key={item.name}
-                              className="group relative text-sm"
+                              className="group  relative text-sm"
                             >
                               <div className="aspect-h-1 aspect-w-1 overflow-hidden rounded-lg bg-gray-100 group-hover:opacity-75">
                                 <img
@@ -265,7 +316,7 @@ export default function Navbar() {
                           <div key={section.name}>
                             <p
                               id={`${category.id}-${section.id}-heading-mobile`}
-                              className="font-medium text-gray-900"
+                              className="font-medium text-gray-900 "
                             >
                               {section.name}
                             </p>
@@ -297,7 +348,7 @@ export default function Navbar() {
                     <div key={page.name} className="flow-root">
                       <a
                         href={page.href}
-                        className="-m-2 block p-2 font-medium text-gray-900"
+                        className="-m-2 block p-2 font-medium  text-gray-900"
                       >
                         {page.name}
                       </a>
@@ -343,7 +394,7 @@ export default function Navbar() {
         </Dialog>
       </Transition.Root>
 
-      <header className="relative bg-white">
+      <header className="relative bg-white border-b">
         <p className="flex h-10 items-center justify-center bg-indigo-600 px-4 text-sm font-medium text-white sm:px-6 lg:px-8">
           Get free delivery on orders over $100
         </p>
@@ -352,7 +403,7 @@ export default function Navbar() {
           aria-label="Top"
           className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"
         >
-          <div className="border-b border-gray-200">
+          <div className=" border-gray-200">
             <div className="flex h-16 items-center">
               <button
                 type="button"
@@ -371,155 +422,100 @@ export default function Navbar() {
                   <Image
                     src="/images/loqo.png"
                     alt="Logo"
-                    width={65} // set the width directly
-                    height={50} // set the height if needed
+                    width={64.5} // set the width directly
+                    height={46} // set the height if needed
                   />
                 </a>
               </div>
-
-              {/* Flyout menus */}
-              <Popover.Group className="hidden lg:ml-8 lg:block lg:self-stretch">
-                <div className="flex h-full space-x-8">
-                  {navigation.categories.map((category) => (
-                    <Popover key={category.name} className="flex">
-                      {({ open }) => (
-                        <>
-                          <div className="relative flex">
-                            <Popover.Button
-                              className={classNames(
-                                open
-                                  ? 'border-indigo-600 text-indigo-600'
-                                  : 'border-transparent text-gray-700 hover:text-gray-800',
-                                'relative z-10 -mb-px flex items-center border-b-2 pt-px text-sm font-medium transition-colors duration-200 ease-out'
-                              )}
+              {/* 
+              {/* Flyout menus  to change*/}
+              <NavigationMenu className="hidden sm:block md:ml-8 md:block">
+                <NavigationMenuList>
+                  <NavigationMenuItem>
+                    <NavigationMenuTrigger>Women</NavigationMenuTrigger>
+                    <NavigationMenuContent>
+                      <ul className="grid gap-3 p-4 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
+                        <li className="row-span-3">
+                          <NavigationMenuLink asChild>
+                            <a
+                              className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md"
+                              href="/"
                             >
-                              {category.name}
-                            </Popover.Button>
-                          </div>
-
-                          <Transition
-                            as={Fragment}
-                            enter="transition ease-out duration-200"
-                            enterFrom="opacity-0"
-                            enterTo="opacity-100"
-                            leave="transition ease-in duration-150"
-                            leaveFrom="opacity-100"
-                            leaveTo="opacity-0"
-                          >
-                            <Popover.Panel className="absolute inset-x-0 top-full text-sm text-gray-500">
-                              {/* Presentational element used to render the bottom shadow, if we put the shadow on the actual panel it pokes out the top, so we use this shorter element to hide the top of the shadow */}
-                              <div
-                                className="absolute inset-0 top-1/2 bg-white shadow"
-                                aria-hidden="true"
-                              />
-
-                              <div className="relative bg-white">
-                                <div className="mx-auto max-w-7xl px-8">
-                                  <div className="grid grid-cols-2 gap-x-8 gap-y-10 py-16">
-                                    <div className="col-start-2 grid grid-cols-2 gap-x-8">
-                                      {category.featured.map((item) => (
-                                        <div
-                                          key={item.name}
-                                          className="group relative text-base sm:text-sm"
-                                        >
-                                          <div className="aspect-h-1 aspect-w-1 overflow-hidden rounded-lg bg-gray-100 group-hover:opacity-75">
-                                            <img
-                                              src={item.imageSrc}
-                                              alt={item.imageAlt}
-                                              className="object-cover object-center"
-                                            />
-                                          </div>
-                                          <a
-                                            href={item.href}
-                                            className="mt-6 block font-medium text-gray-900"
-                                          >
-                                            <span
-                                              className="absolute inset-0 z-10"
-                                              aria-hidden="true"
-                                            />
-                                            {item.name}
-                                          </a>
-                                          <p
-                                            aria-hidden="true"
-                                            className="mt-1"
-                                          >
-                                            Shop now
-                                          </p>
-                                        </div>
-                                      ))}
-                                    </div>
-                                    <div className="row-start-1 grid grid-cols-3 gap-x-8 gap-y-10 text-sm">
-                                      {category.sections.map((section) => (
-                                        <div key={section.name}>
-                                          <p
-                                            id={`${section.name}-heading`}
-                                            className="font-medium text-gray-900"
-                                          >
-                                            {section.name}
-                                          </p>
-                                          <ul
-                                            role="list"
-                                            aria-labelledby={`${section.name}-heading`}
-                                            className="mt-6 space-y-6 sm:mt-4 sm:space-y-4"
-                                          >
-                                            {section.items.map((item) => (
-                                              <li
-                                                key={item.name}
-                                                className="flex"
-                                              >
-                                                <a
-                                                  href={item.href}
-                                                  className="hover:text-gray-800"
-                                                >
-                                                  {item.name}
-                                                </a>
-                                              </li>
-                                            ))}
-                                          </ul>
-                                        </div>
-                                      ))}
-                                    </div>
-                                  </div>
-                                </div>
+                              <div className="mb-2 mt-4 text-lg font-medium">
+                                Fine Urban
                               </div>
-                            </Popover.Panel>
-                          </Transition>
-                        </>
-                      )}
-                    </Popover>
-                  ))}
-
-                  {navigation.pages.map((page) => (
-                    <a
-                      key={page.name}
-                      href={page.href}
-                      className="flex items-center text-sm font-medium text-gray-700 hover:text-gray-800"
-                    >
-                      {page.name}
-                    </a>
-                  ))}
-                </div>
-              </Popover.Group>
+                              <p className="text-sm leading-tight text-muted-foreground">
+                                Beautifully designed okrika built all the way
+                                from US and UK.
+                              </p>
+                            </a>
+                          </NavigationMenuLink>
+                        </li>
+                        <ListItem href="/docs" title="Favorites">
+                          Black friday deals
+                        </ListItem>
+                        <ListItem
+                          href="/docs/installation"
+                          title="New Arrivals"
+                        >
+                          Seasonal clothing
+                        </ListItem>
+                        <ListItem
+                          href="/docs/primitives/typography"
+                          title="Jeans"
+                        >
+                          Matching sets
+                        </ListItem>
+                      </ul>
+                    </NavigationMenuContent>
+                  </NavigationMenuItem>
+                  <NavigationMenuItem>
+                    <NavigationMenuTrigger>Trending</NavigationMenuTrigger>
+                    <NavigationMenuContent>
+                      <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
+                        {components.map((component) => (
+                          <ListItem
+                            key={component.title}
+                            title={component.title}
+                            href={component.href}
+                          >
+                            {component.description}
+                          </ListItem>
+                        ))}
+                      </ul>
+                    </NavigationMenuContent>
+                  </NavigationMenuItem>
+                  <NavigationMenuItem>
+                    <Link href="/docs" legacyBehavior passHref>
+                      <NavigationMenuLink
+                        className={navigationMenuTriggerStyle()}
+                      >
+                        Contact Us
+                      </NavigationMenuLink>
+                    </Link>
+                  </NavigationMenuItem>
+                </NavigationMenuList>
+              </NavigationMenu>
 
               <div className="ml-auto flex items-center">
                 <div className="hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:space-x-6">
-                  <a
-                    href="#"
+                  <Link
+                    href="/login"
                     className="text-sm font-medium text-gray-700 hover:text-gray-800"
                   >
                     Sign in
-                  </a>
+                  </Link>
                   <span className="h-6 w-px bg-gray-200" aria-hidden="true" />
-                  <a
-                    href="#"
+                  <Link
+                    href="/signup"
                     className="text-sm font-medium text-gray-700 hover:text-gray-800"
                   >
                     Create account
-                  </a>
+                  </Link>
                 </div>
 
                 <div className="hidden lg:ml-8 lg:flex">
-                  <a
+                  <Link
                     href="#"
                     className="flex items-center text-gray-700 hover:text-gray-800"
                   >
@@ -530,7 +526,7 @@ export default function Navbar() {
                     />
                     <span className="ml-3 block text-sm font-medium">KES</span>
                     <span className="sr-only">, change currency</span>
-                  </a>
+                  </Link>
                 </div>
 
                 {/* Search */}
@@ -565,3 +561,29 @@ export default function Navbar() {
     </div>
   );
 }
+
+const ListItem = React.forwardRef<
+  React.ElementRef<'a'>,
+  React.ComponentPropsWithoutRef<'a'>
+>(({ className, title, children, ...props }, ref) => {
+  return (
+    <li>
+      <NavigationMenuLink asChild>
+        <a
+          ref={ref}
+          className={cn(
+            'block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground',
+            className
+          )}
+          {...props}
+        >
+          <div className="text-sm font-medium leading-none">{title}</div>
+          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+            {children}
+          </p>
+        </a>
+      </NavigationMenuLink>
+    </li>
+  );
+});
+ListItem.displayName = 'ListItem';

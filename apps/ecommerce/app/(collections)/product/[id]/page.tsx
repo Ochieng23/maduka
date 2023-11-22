@@ -140,6 +140,11 @@ interface Product {
   thumbnail: string;
   title: string;
 }
+type CartItem = {
+  id: number;
+  quantity: number; // Ensure 'quantity' property is defined
+  // Add other properties as needed
+};
 // type CartItem = {
 //   id: number;
 //   // Add other properties as needed
@@ -187,50 +192,44 @@ export default function Example() {
     setCart(storedCart);
   }, []);
 
-  const updateAndSaveCart = (updatedCart: { id: number }[]) => {
-    setCart(updatedCart as never[]);
-    localStorage.setItem('cart', JSON.stringify(updatedCart));
+  const updateAndSaveCart = (updatedCart: CartItem[] | { id: number }[]) => {
+    setCart(updatedCart as CartItem[]);
+    localStorage.setItem('cart', JSON.stringify(updatedCart as CartItem[]));
   };
-  type CartItem = {
-    id: number;
-    quantity: number; // Ensure 'quantity' property is defined
-    // Add other properties as needed
-  };
-
-  // Use Map for better performance
-  const cartMap = new Map<number, CartItem>();
+  
 
   function isCartItemWithQuantity(
     item: CartItem | { id: number; quantity?: unknown }
-  ): boolean {
+  ): item is CartItem {
     return typeof item.quantity === 'number' && item.quantity > 0;
   }
 
   function addToCart(item: Product | null) {
     if (!item) {
-      // Handle the case when there is no product data
       console.error('Cannot add to cart. Product data is null.');
       return;
     }
-
-    if (cartMap.has(item.id)) {
-      const existingCartItem = cartMap.get(item.id)!;
+  
+    const updatedCart = [...cart];
+    const existingCartItemIndex = updatedCart.findIndex((cartItem) => cartItem.id === item.id);
+  
+    if (existingCartItemIndex !== -1) {
+      const existingCartItem = updatedCart[existingCartItemIndex];
+  
       if (isCartItemWithQuantity(existingCartItem)) {
         existingCartItem.quantity++;
       } else {
-        existingCartItem.quantity = 1;
+        // Explicitly type existingCartItem as CartItem
+        (existingCartItem as CartItem).quantity = 1;
       }
     } else {
-      // Initialize quantity to 1 for new items
       const newItem: CartItem = { ...item, quantity: 1 };
-      cartMap.set(newItem.id, newItem);
+      updatedCart.push(newItem);
     }
-
-    // Convert Map values to an array before updating and saving the cart
-    const updatedCart = Array.from(cartMap.values());
+  
     updateAndSaveCart(updatedCart);
   }
-
+  
   return (
     <>
       <main className="mx-auto mt-8 max-w-2xl px-4 pb-16 sm:px-6 sm:pb-24 lg:max-w-7xl lg:px-8">

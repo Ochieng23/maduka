@@ -229,9 +229,10 @@ type CartItem = {
   images: string[]; // Make sure to include the 'images' property
   color: string;
   size: string;
-  price:number;
+  price: number;
   inStock: any;
   leadTime: any;
+  quantity: any;
 };
 
 function classNames(...classes: (string | undefined | null | false)[]) {
@@ -242,27 +243,54 @@ export default function Example() {
   const [open, setOpen] = useState(false);
   const [cart, setCart] = useState<CartItem[]>([]);
 
-
   useEffect(() => {
     const storedCart = localStorage.getItem('cart');
     if (storedCart) {
       const parsedCart = JSON.parse(storedCart);
       setCart(parsedCart);
-      console.log(parsedCart);
     }
   }, []);
+
+  const calculateSubtotal =():number => {
+      const subtotal = cart.reduce((total, item) => total + item.price * item.quantity, 0);
+      return subtotal
+  }
+
+  const calculateTotalPrice = (): number => {
+    // Calculate total price based on the price and quantity of each item in the cart
+   
+
+    // Calculate tax (16% of subtotal)
+    const tax = 0.16 * calculateSubtotal();
+
+    // Calculate shipping cost based on location
+    const shippingCost = calculateShippingCost();
+
+    // Calculate total price including tax and shipping
+    const totalPrice = calculateSubtotal() + tax + shippingCost;
+
+    return totalPrice;
+  };
+
+  const calculateShippingCost = (): number => {
+    // Assuming location information is available in your application
+    const isWithinNairobi = true; // Replace with actual logic
+
+    // Set shipping cost based on location
+    return isWithinNairobi ? 250 : 300;
+  };
 
   const removeFromLocalStorage = (id: number) => {
     try {
       const storedItems = JSON.parse(localStorage.getItem('cart') || '[]') as CartItem[];
       const updatedItems = storedItems.filter((item: CartItem) => item.id !== id);
       localStorage.setItem('cart', JSON.stringify(updatedItems));
-      setCart((updatedItems: CartItem[]) => updatedItems);
+      setCart(updatedItems);
+      window.location.reload();
     } catch (error) {
       console.error('Error removing item from localStorage:', error);
     }
   };
-  
 
   return (
     <div className="bg-white">
@@ -288,7 +316,6 @@ export default function Example() {
                   <div className="flex-shrink-0">
                     <img
                       src={product.images[0]}
-                      
                       className="h-24 w-24 rounded-md object-cover object-center sm:h-48 sm:w-48"
                     />
                   </div>
@@ -346,8 +373,9 @@ export default function Example() {
                             onClick={() => removeFromLocalStorage(product.id)}
                             type="button"
                             className="-m-2 inline-flex p-2 bg-red-500 text-gray-400 hover:text-gray-500"
+                            aria-label={`Remove ${product.title} from cart`}
                           >
-                            <span className="sr-only">Remove</span>
+                            <span className="sr-only"></span>
                             <XMarkIconMini
                               className="h-5 w-5"
                               aria-hidden="true"
@@ -397,7 +425,7 @@ export default function Example() {
             <dl className="mt-6 space-y-4">
               <div className="flex items-center justify-between">
                 <dt className="text-sm text-gray-600">Subtotal</dt>
-                <dd className="text-sm font-medium text-gray-900">$99.00</dd>
+                <dd className="text-sm font-medium text-gray-900">KES{calculateSubtotal()}</dd>
               </div>
               <div className="flex items-center justify-between border-t border-gray-200 pt-4">
                 <dt className="flex items-center text-sm text-gray-600">
@@ -415,7 +443,7 @@ export default function Example() {
                     />
                   </a>
                 </dt>
-                <dd className="text-sm font-medium text-gray-900">$5.00</dd>
+                <dd className="text-sm font-medium text-gray-900">KES 250</dd>
               </div>
               <div className="flex items-center justify-between border-t border-gray-200 pt-4">
                 <dt className="flex text-sm text-gray-600">
@@ -433,13 +461,14 @@ export default function Example() {
                     />
                   </a>
                 </dt>
-                <dd className="text-sm font-medium text-gray-900">$8.32</dd>
+                <dd className="text-sm font-medium text-gray-900">16%</dd>
               </div>
               <div className="flex items-center justify-between border-t border-gray-200 pt-4">
                 <dt className="text-base font-medium text-gray-900">
                   Order total
                 </dt>
-                <dd className="text-base font-medium text-gray-900">$112.32</dd>
+                
+                <dd className="text-base font-medium text-gray-900">KES{calculateTotalPrice()}</dd>
               </div>
             </dl>
 

@@ -417,7 +417,7 @@ export default function Navbar() {
 
               {/* Logo */}
               <div className="ml-4 flex lg:ml-0">
-                <a href="#">
+                <Link href="/">
                   <span className="sr-only">Your Company</span>
                   <Image
                     src="/images/loqo.png"
@@ -425,7 +425,7 @@ export default function Navbar() {
                     width={64.5} // set the width directly
                     height={46} // set the height if needed
                   />
-                </a>
+                </Link>
               </div>
               {/* 
               {/* Flyout menus  to change*/}

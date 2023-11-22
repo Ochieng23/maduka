@@ -1,54 +1,54 @@
-"use client"
-import React from 'react'
+'use client';
+import React from 'react';
 import {
-    Dialog,
-    Popover,
-    RadioGroup,
-    Tab,
-    Transition,
-  } from '@headlessui/react';
-  import {
-    Bars3Icon,
-    CurrencyDollarIcon,
-    GlobeAmericasIcon,
-    MagnifyingGlassIcon,
-    ShoppingBagIcon,
-    UserIcon,
-    XMarkIcon,
-  } from '@heroicons/react/24/outline';
+  Dialog,
+  Popover,
+  RadioGroup,
+  Tab,
+  Transition,
+} from '@headlessui/react';
+import {
+  Bars3Icon,
+  CurrencyDollarIcon,
+  GlobeAmericasIcon,
+  MagnifyingGlassIcon,
+  ShoppingBagIcon,
+  UserIcon,
+  XMarkIcon,
+} from '@heroicons/react/24/outline';
 
-
-  const footerNavigation = {
-    products: [
-      { name: 'Bags', href: '#' },
-      { name: 'Tees', href: '#' },
-      { name: 'Objects', href: '#' },
-      { name: 'Home Goods', href: '#' },
-      { name: 'Accessories', href: '#' },
-    ],
-    company: [
-      { name: 'Who we are', href: '#' },
-      { name: 'Sustainability', href: '#' },
-      { name: 'Press', href: '#' },
-      { name: 'Careers', href: '#' },
-      { name: 'Terms & Conditions', href: '#' },
-      { name: 'Privacy', href: '#' },
-    ],
-    customerService: [
-      { name: 'Contact', href: '#' },
-      { name: 'Shipping', href: '#' },
-      { name: 'Returns', href: '#' },
-      { name: 'Warranty', href: '#' },
-      { name: 'Secure Payments', href: '#' },
-      { name: 'FAQ', href: '#' },
-      { name: 'Find a store', href: '#' },
-    ],
-  };
+import Image from 'next/image';
+const footerNavigation = {
+  products: [
+    { name: 'Bags', href: '#' },
+    { name: 'Tees', href: '#' },
+    { name: 'Objects', href: '#' },
+    { name: 'Home Goods', href: '#' },
+    { name: 'Accessories', href: '#' },
+  ],
+  company: [
+    { name: 'Who we are', href: '#' },
+    { name: 'Sustainability', href: '#' },
+    { name: 'Press', href: '#' },
+    { name: 'Careers', href: '#' },
+    { name: 'Terms & Conditions', href: '#' },
+    { name: 'Privacy', href: '#' },
+  ],
+  customerService: [
+    { name: 'Contact', href: '#' },
+    { name: 'Shipping', href: '#' },
+    { name: 'Returns', href: '#' },
+    { name: 'Warranty', href: '#' },
+    { name: 'Secure Payments', href: '#' },
+    { name: 'FAQ', href: '#' },
+    { name: 'Find a store', href: '#' },
+  ],
+};
 
 function Footer() {
   return (
     <div>
-        <footer aria-labelledby="footer-heading">
+      <footer aria-labelledby="footer-heading">
         <h2 id="footer-heading" className="sr-only">
           Footer
         </h2>
@@ -57,10 +57,11 @@ function Footer() {
             <div className="grid grid-cols-1 md:grid-flow-col md:auto-rows-min md:grid-cols-12 md:gap-x-8 md:gap-y-16">
               {/* Image section */}
               <div className="col-span-1 md:col-span-2 lg:col-start-1 lg:row-start-1">
-                <img
-                  src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
-                  alt=""
-                  className="h-8 w-auto"
+                <Image
+                  src="/images/loqo.png"
+                  alt="Logo"
+                  width={64.5} // set the width directly
+                  height={46} // set the height if needed
                 />
               </div>
 
@@ -161,7 +162,7 @@ function Footer() {
         </div>
       </footer>
     </div>
-  )
+  );
 }
 
-export default Footer
+export default Footer;

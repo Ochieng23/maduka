@@ -1,5 +1,8 @@
 'use client';
 import React from 'react';
+import { FaYoutube, FaXTwitter } from 'react-icons/fa6';
+import { MdWhatsapp } from 'react-icons/md';
+import { FaFacebook, FaInstagram, FaTiktok } from 'react-icons/fa';
 import {
   Dialog,
   Popover,
@@ -18,6 +21,7 @@ import {
 } from '@heroicons/react/24/outline';
 
 import Image from 'next/image';
+import Link from 'next/link';
 const footerNavigation = {
   products: [
     { name: 'Bags', href: '#' },
@@ -150,6 +154,29 @@ function Footer() {
                     </button>
                   </div>
                 </form>
+                <div>
+                  <h3 className="mt-3 font-medium text-gray-900">follow us</h3>
+                  <div className="flex gap-3">
+                    <Link href="#">
+                      <FaTiktok />
+                    </Link>
+                    <Link href="#">
+                      <FaFacebook />
+                    </Link>
+                    <Link href="#">
+                      <FaYoutube />
+                    </Link>
+                    <Link href="#">
+                      <FaXTwitter />
+                    </Link>
+                    <Link href="#">
+                      <MdWhatsapp />{' '}
+                    </Link>
+                    <Link href="#">
+                      <FaInstagram />
+                    </Link>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

@@ -7,6 +7,8 @@ import React, {
   useState,
 } from 'react';
 
+import toast from 'react-hot-toast';
+
 type Product = {
   id: number;
   item: number;
@@ -66,6 +68,11 @@ const CartContextProvider: React.FC<CartContextProviderProps> = ({
         return { ...prev, items: [...prev.items, { ...product, quantity: 1 }] };
       }
     });
+
+    setTimeout(() => {
+      window.location.reload();
+    }, 2000);
+    toast.success('Product added to cart');
   }, []);
 
   const removeFromCart = (id: number) => {
@@ -73,6 +80,11 @@ const CartContextProvider: React.FC<CartContextProviderProps> = ({
       ...prev,
       items: prev.items.filter((item) => item.id !== id),
     }));
+    toast.success('Removed from cart');
+
+    setTimeout(() => {
+      window.location.reload();
+    }, 2000);
   };
 
   useEffect(() => {

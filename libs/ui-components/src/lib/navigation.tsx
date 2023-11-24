@@ -209,10 +209,12 @@ function classNames(...classes: string[]) {
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [cart, setCart] = useState([]);
+  const [cartqty, setCartqty] = useState(null)
 
   useEffect(() => {
     const storedCart = JSON.parse(localStorage.getItem('cartItems') || '[]');
     setCart(storedCart);
+    setCartqty(storedCart.length)
   }, []);
 
   return (
@@ -550,7 +552,7 @@ export default function Navbar() {
                       aria-hidden="true"
                     />
                     <span className="ml-2 text-sm font-medium text-gray-700 group-hover:text-gray-800">
-                      {cart.length}
+                      {cartqty}
                     </span>
                     <span className="sr-only">items in cart, view bag</span>
                   </Link>

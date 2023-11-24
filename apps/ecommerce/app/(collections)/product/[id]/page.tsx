@@ -1,6 +1,7 @@
 'use client';
 import { Fragment, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { GoCheckCircle } from 'react-icons/go';
 
 import {
   Dialog,
@@ -16,6 +17,7 @@ import {
 import { StarIcon } from '@heroicons/react/20/solid';
 import { useParams } from 'next/navigation';
 import { useCart } from 'apps/ecommerce/app/cart/components/cartContext';
+import toast from 'react-hot-toast';
 
 const policies = [
   {
@@ -180,6 +182,17 @@ export default function Example() {
   const [selectedSize, setSelectedSize] = useState(product.sizes[2]);
   const [merch, setMerch] = useState<Product | null>(null);
   const params = useParams();
+  const [incart, setIncart] = useState(false);
+
+  const checkincart = (merch: any) => {
+    const existingItem = state.items.find((item) => item.id === merch.id);
+
+    if (existingItem) {
+      setIncart(true);
+    } else {
+      setIncart(false);
+    }
+  };
 
   const handleAddToCart = () => {
     if (merch) {
@@ -193,7 +206,8 @@ export default function Example() {
         price: parseFloat(merch.price),
         quantity: 1,
       });
-      console.log('Product successfully added to the cart');
+      console.error('Added to cart');
+      
     } else {
       console.error('Error: Unable to add product to the cart');
     }
@@ -205,8 +219,9 @@ export default function Example() {
         const response = await fetch(
           `https://dummyjson.com/products/${params.id}`
         );
-        const data: Product = await response.json(); // Adjust the type based on the API response
+        const data: Product = await response.json(); 
         setMerch(data);
+        checkincart(data);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -385,9 +400,16 @@ export default function Example() {
                 </RadioGroup>
               </div>
 
+              {incart ? (
+                <p className="w-64 mt-6 text-slate-500 flex items-center gap-1  p-2 ">
+                  <GoCheckCircle className="text-teal-400 ml-2 " size={20} />
+                  <span className="ml-2">product is already in cart</span>
+                </p>
+              ) : null}
+
               <button
                 type="submit"
-                className="mt-8 flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 px-8 py-3 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                className="mt-4 flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 px-8 py-3 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                 onClick={() => handleAddToCart()}
               >
                 Add to cart

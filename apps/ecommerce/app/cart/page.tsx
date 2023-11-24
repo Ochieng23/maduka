@@ -286,22 +286,6 @@ export default function Example() {
     return isWithinNairobi ? 250 : 300;
   };
 
-  const removeFromLocalStorage = (id: number) => {
-    try {
-      const storedItems = JSON.parse(
-        localStorage.getItem('cartItems') || '[]'
-      ) as CartItem[];
-      const updatedItems = storedItems.filter(
-        (item: CartItem) => item.id !== id
-      );
-      localStorage.setItem('cart', JSON.stringify(updatedItems));
-      setCart(updatedItems);
-      window.location.reload();
-    } catch (error) {
-      console.error('Error removing item from localStorage:', error);
-    }
-  };
-
   return (
     <div className="bg-white">
       {/* Mobile menu */}
@@ -370,7 +354,7 @@ export default function Example() {
                         >
                           Quantity, {product.title}
                         </label>
-                        
+
                         <select
                           id={`quantity-${productIdx}`}
                           value={product.quantity}
@@ -399,7 +383,7 @@ export default function Example() {
                           <option value={7}>7</option>
                           <option value={8}>8</option>
                         </select>
-                        
+
                         <div className="absolute right-0 top-0">
                           <button
                             onClick={() => removeFromCart(product.id)}

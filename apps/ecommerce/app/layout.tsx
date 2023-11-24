@@ -4,6 +4,7 @@ import Footer from '../../../libs/ui-components/src/lib/footer';
 // import { AuthContextProvider } from './(auth)/components/context';
 
 import { CartContextProvider } from './cart/components/cartContext';
+import { Toaster } from 'react-hot-toast';
 
 export const metadata = {
   title: 'Welcome to ecommerce',
@@ -19,18 +20,25 @@ export default function RootLayout({
     <html lang="en">
       <body>
         {/* Wrap with context providers */}
-       
-          <CartContextProvider>
-            <div className="flex flex-col min-h-screen">
-              <header>
-                {' '}
-                <Navbar />
-              </header>
-              <main className="flex-grow">{children}</main>
-              <Footer />
-            </div>
-          
-            </CartContextProvider>
+
+        <CartContextProvider>
+          <Toaster
+            toastOptions={{
+              style: {
+                background: 'rgb(51 65 85)',
+                color: '#fff',
+              },
+            }}
+          />
+          <div className="flex flex-col min-h-screen">
+            <header>
+              {' '}
+              <Navbar />
+            </header>
+            <main className="flex-grow">{children}</main>
+            <Footer />
+          </div>
+        </CartContextProvider>
       </body>
     </html>
   );

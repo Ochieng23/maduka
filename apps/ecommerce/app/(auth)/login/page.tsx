@@ -226,12 +226,13 @@ function Page() {
             </div>
           </div>
         </div>
-        <div className="relative hidden w-0 flex-1 lg:block">
-          <img
+        <div className="image-wrapper relative hidden w-0 flex-1 lg:block">
+          <Image
             className="absolute inset-0 h-full w-full object-cover"
             src="https://danddclothing.com/cdn/shop/collections/evening-dresses.jpg?v=1673967510"
             alt=""
             // Set the height of the image
+            width={800} height={400} quality={100}
           />
         </div>
       </div>

@@ -211,9 +211,8 @@ export default function Navbar() {
   const [cart, setCart] = useState([]);
 
   useEffect(() => {
-    const storedCart = JSON.parse(localStorage.getItem('cart') || '[]');
+    const storedCart = JSON.parse(localStorage.getItem('cartItems') || '[]');
     setCart(storedCart);
-    console.log(storedCart);
   }, []);
 
   return (

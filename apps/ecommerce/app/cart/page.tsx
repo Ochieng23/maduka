@@ -13,6 +13,7 @@ import {
   QuestionMarkCircleIcon,
   XMarkIcon as XMarkIconMini,
 } from '@heroicons/react/20/solid';
+import { useCart } from './components/cartContext';
 
 const navigation = {
   categories: [
@@ -242,23 +243,28 @@ function classNames(...classes: (string | undefined | null | false)[]) {
 export default function Example() {
   const [open, setOpen] = useState(false);
   const [cart, setCart] = useState<CartItem[]>([]);
+  const { removeFromCart } = useCart();
 
   useEffect(() => {
-    const storedCart = localStorage.getItem('cart');
+    const storedCart = localStorage.getItem('cartItems');
     if (storedCart) {
       const parsedCart = JSON.parse(storedCart);
       setCart(parsedCart);
     }
   }, []);
 
-  const calculateSubtotal =():number => {
-      const subtotal = cart.reduce((total, item) => total + item.price * item.quantity, 0);
-      return subtotal
-  }
+  console.log(cart);
+
+  const calculateSubtotal = (): number => {
+    const subtotal = cart.reduce(
+      (total, item) => total + item.price * item.quantity,
+      0
+    );
+    return subtotal;
+  };
 
   const calculateTotalPrice = (): number => {
     // Calculate total price based on the price and quantity of each item in the cart
-   
 
     // Calculate tax (16% of subtotal)
     const tax = 0.16 * calculateSubtotal();
@@ -282,8 +288,12 @@ export default function Example() {
 
   const removeFromLocalStorage = (id: number) => {
     try {
-      const storedItems = JSON.parse(localStorage.getItem('cart') || '[]') as CartItem[];
-      const updatedItems = storedItems.filter((item: CartItem) => item.id !== id);
+      const storedItems = JSON.parse(
+        localStorage.getItem('cartItems') || '[]'
+      ) as CartItem[];
+      const updatedItems = storedItems.filter(
+        (item: CartItem) => item.id !== id
+      );
       localStorage.setItem('cart', JSON.stringify(updatedItems));
       setCart(updatedItems);
       window.location.reload();
@@ -314,10 +324,17 @@ export default function Example() {
               {cart.map((product, productIdx) => (
                 <li key={product.id} className="flex py-6 sm:py-10">
                   <div className="flex-shrink-0">
-                    <img
-                      src={product.images[0]}
-                      className="h-24 w-24 rounded-md object-cover object-center sm:h-48 sm:w-48"
-                    />
+                    {product.images && product.images.length > 0 ? (
+                      <img
+                        src={product.images[0]}
+                        className="h-24 w-24 rounded-md object-cover object-center sm:h-48 sm:w-48"
+                        alt={product.title}
+                      />
+                    ) : (
+                      <span className="h-24 w-24 bg-gray-200 rounded-md flex items-center justify-center">
+                        No Image
+                      </span>
+                    )}
                   </div>
 
                   <div className="ml-4 flex flex-1 flex-col justify-between sm:ml-6">
@@ -353,10 +370,25 @@ export default function Example() {
                         >
                           Quantity, {product.title}
                         </label>
+                        
                         <select
                           id={`quantity-${productIdx}`}
+                          value={product.quantity}
                           name={`quantity-${productIdx}`}
                           className="max-w-full rounded-md border border-gray-300 py-1.5 text-left text-base font-medium leading-5 text-gray-700 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm"
+                          onChange={(e) => {
+                            const newQuantity = parseInt(e.target.value, 10);
+                            const updatedCart = cart.map((item) =>
+                              item.id === product.id
+                                ? { ...item, quantity: newQuantity }
+                                : item
+                            );
+                            setCart(updatedCart);
+                            localStorage.setItem(
+                              'cartItems',
+                              JSON.stringify(updatedCart)
+                            );
+                          }}
                         >
                           <option value={1}>1</option>
                           <option value={2}>2</option>
@@ -367,10 +399,10 @@ export default function Example() {
                           <option value={7}>7</option>
                           <option value={8}>8</option>
                         </select>
-
+                        
                         <div className="absolute right-0 top-0">
                           <button
-                            onClick={() => removeFromLocalStorage(product.id)}
+                            onClick={() => removeFromCart(product.id)}
                             type="button"
                             className="-m-2 inline-flex p-2 bg-red-500 text-gray-400 hover:text-gray-500"
                             aria-label={`Remove ${product.title} from cart`}
@@ -425,7 +457,9 @@ export default function Example() {
             <dl className="mt-6 space-y-4">
               <div className="flex items-center justify-between">
                 <dt className="text-sm text-gray-600">Subtotal</dt>
-                <dd className="text-sm font-medium text-gray-900">KES{calculateSubtotal()}</dd>
+                <dd className="text-sm font-medium text-gray-900">
+                  KES{calculateSubtotal()}
+                </dd>
               </div>
               <div className="flex items-center justify-between border-t border-gray-200 pt-4">
                 <dt className="flex items-center text-sm text-gray-600">
@@ -467,8 +501,10 @@ export default function Example() {
                 <dt className="text-base font-medium text-gray-900">
                   Order total
                 </dt>
-                
-                <dd className="text-base font-medium text-gray-900">KES{calculateTotalPrice()}</dd>
+
+                <dd className="text-base font-medium text-gray-900">
+                  KES{calculateTotalPrice()}
+                </dd>
               </div>
             </dl>
 

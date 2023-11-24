@@ -1,6 +1,7 @@
 'use client';
 import { Fragment, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+
 import {
   Dialog,
   Popover,
@@ -9,16 +10,12 @@ import {
   Transition,
 } from '@headlessui/react';
 import {
-  Bars3Icon,
   CurrencyDollarIcon,
   GlobeAmericasIcon,
-  MagnifyingGlassIcon,
-  ShoppingBagIcon,
-  UserIcon,
-  XMarkIcon,
 } from '@heroicons/react/24/outline';
 import { StarIcon } from '@heroicons/react/20/solid';
 import { useParams } from 'next/navigation';
+import { useCart } from 'apps/ecommerce/app/cart/components/cartContext';
 
 const policies = [
   {
@@ -134,22 +131,39 @@ interface Product {
   discountPercentage: number;
   id: number;
   images: string[];
-  price: number;
+  price: string;
   rating: number;
   stock: number;
   thumbnail: string;
   title: string;
 }
-type CartItem = {
-  id: number;
-  quantity: number; // Ensure 'quantity' property is defined
-  // Add other properties as needed
+
+type items = {
+  items: (
+    | Product
+    | {
+        id: number;
+        item: number;
+        title: string;
+        images: string[];
+        color: string;
+        size: string;
+        price: number;
+        quantity: number;
+      }
+  )[];
 };
-// type CartItem = {
-//   id: number;
-//   // Add other properties as needed
-//   quantity?: number;
-// };
+
+type CartProductType = {
+  id: number;
+  item: number;
+  title: string;
+  images: string[];
+  color: string;
+  size: string;
+  price: number;
+  quantity: number;
+};
 
 // Update the classNames function with TypeScript type annotations
 function classNames(...classes: string[]) {
@@ -159,15 +173,31 @@ function classNames(...classes: string[]) {
 // Rest of your component code...
 
 export default function Example() {
-  const [cart, setCart] = useState<{ id: number }[]>([]);
+  const { state, addToCart } = useCart();
+
   const router = useRouter();
   const [selectedColor, setSelectedColor] = useState(product.colors[0]);
   const [selectedSize, setSelectedSize] = useState(product.sizes[2]);
   const [merch, setMerch] = useState<Product | null>(null);
   const params = useParams();
-  console.log(params);
 
-  // ... rest of your code
+  const handleAddToCart = () => {
+    if (merch) {
+      addToCart({
+        id: merch.id,
+        item: merch.id,
+        title: merch.title,
+        images: merch.images,
+        color: selectedColor.name,
+        size: selectedSize.name,
+        price: parseFloat(merch.price),
+        quantity: 1,
+      });
+      console.log('Product successfully added to the cart');
+    } else {
+      console.error('Error: Unable to add product to the cart');
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -175,7 +205,7 @@ export default function Example() {
         const response = await fetch(
           `https://dummyjson.com/products/${params.id}`
         );
-        const data: Product = await response.json(); // Adjust the type here
+        const data: Product = await response.json(); // Adjust the type based on the API response
         setMerch(data);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -185,55 +215,10 @@ export default function Example() {
     fetchData();
   }, [params.id]);
 
-  console.log(merch);
-
-  useEffect(() => {
-    const storedCart = JSON.parse(localStorage.getItem('cart') || '[]');
-    setCart(storedCart);
-  }, []);
-
-  const updateAndSaveCart = (updatedCart: CartItem[] | { id: number }[]) => {
-    setCart(updatedCart as CartItem[]);
-    localStorage.setItem('cart', JSON.stringify(updatedCart as CartItem[]));
-  };
-  
-
-  function isCartItemWithQuantity(
-    item: CartItem | { id: number; quantity?: unknown }
-  ): item is CartItem {
-    return typeof item.quantity === 'number' && item.quantity > 0;
-  }
-
-  function addToCart(item: Product | null) {
-    if (!item) {
-      console.error('Cannot add to cart. Product data is null.');
-      return;
-    }
-  
-    const updatedCart = [...cart];
-    const existingCartItemIndex = updatedCart.findIndex((cartItem) => cartItem.id === item.id);
-  
-    if (existingCartItemIndex !== -1) {
-      const existingCartItem = updatedCart[existingCartItemIndex];
-  
-      if (isCartItemWithQuantity(existingCartItem)) {
-        existingCartItem.quantity++;
-      } else {
-        // Explicitly type existingCartItem as CartItem
-        (existingCartItem as CartItem).quantity = 1;
-      }
-    } else {
-      const newItem: CartItem = { ...item, quantity: 1 };
-      updatedCart.push(newItem);
-    }
-  
-    updateAndSaveCart(updatedCart);
-  }
-  
   return (
     <>
       <main className="mx-auto mt-8 max-w-2xl px-4 pb-16 sm:px-6 sm:pb-24 lg:max-w-7xl lg:px-8">
-        <div className="lg:grid lg:auto-rows-min lg:grid-cols-12 lg:gap-x-8">
+        <div className="lg:grid lg:auto-rows-min  lg:grid-cols-12 lg:gap-x-8">
           <div className="lg:col-span-5 lg:col-start-8">
             <div className="flex justify-between">
               <h1 className="text-xl font-medium text-gray-900">
@@ -296,9 +281,9 @@ export default function Example() {
                       // Show on large screens
                       'lg:block',
                       // Show on medium screens and hide on small screens
-                      'md:hidden',
+                      'md:grid-cols-2',
                       // Show on small screens and hide on medium screens
-                      'sm:hidden'
+                      'sm:grid-cols-1'
                       // Span two columns and two rows for the primary image on large screens
                     )}
                   />
@@ -401,9 +386,9 @@ export default function Example() {
               </div>
 
               <button
-                onClick={() => addToCart(merch)}
                 type="submit"
                 className="mt-8 flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 px-8 py-3 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                onClick={() => handleAddToCart()}
               >
                 Add to cart
               </button>

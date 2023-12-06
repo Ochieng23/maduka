@@ -1,7 +1,16 @@
 'use client';
 import * as React from 'react';
-import { Fragment, useEffect, useState } from 'react';
-import { Dialog, Popover, Tab, Transition } from '@headlessui/react';
+import { Fragment, useEffect, useState, useRef } from 'react';
+import { Dialog, Popover, Tab, Menu, Transition } from '@headlessui/react';
+import { getAuth, signOut, onAuthStateChanged } from 'firebase/auth';
+import { auth } from '../../../../apps/ecommerce/app/(auth)/components/firebase';
+import toast from 'react-hot-toast';
+
+import {
+  ChevronDownIcon,
+  UserPlusIcon,
+  HeartIcon,
+} from '@heroicons/react/20/solid';
 import {
   Bars3Icon,
   MagnifyingGlassIcon,
@@ -21,6 +30,7 @@ import {
   navigationMenuTriggerStyle,
 } from '../ui/navigation-menu';
 import { cn } from '../utils';
+import { useRouter } from 'next/navigation';
 
 const components: { title: string; href: string; description: string }[] = [
   {
@@ -188,6 +198,19 @@ const navigation = {
     { name: 'Stores', href: '#' },
   ],
 };
+interface Product {
+  brand: string;
+  category: string;
+  description: string;
+  discountPercentage: number;
+  id: number;
+  images: string[];
+  price: number;
+  rating: number;
+  stock: number;
+  thumbnail: string;
+  title: string;
+}
 
 // const getCartFromLocalStorage = () => {
 //   try {
@@ -209,12 +232,71 @@ function classNames(...classes: string[]) {
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [cart, setCart] = useState([]);
-  const [cartqty, setCartqty] = useState(null)
+  const [loadingAuth, setLoadingAuth] = useState(true);
+  const [userDisplayName, setUserDisplayName] = useState('');
+  const [email, setEmail] = useState('');
+  const [cartqty, setCartqty] = useState(null);
+  const router = useRouter();
+  const [searchTerm, setSearchTerm] = useState('');
+  const [searchResults, setSearchResults] = useState<Product[]>([]);
+  const [showSearchInput, setShowSearchInput] = useState(false);
+  const [product, setProduct] = useState<Product[]>([]);
+  const searchRef = useRef(null);
+
+  useEffect(() => {
+    fetch('https://dummyjson.com/products')
+      .then((res) => res.json())
+      .then((json: { products: Product[] }) => setProduct(json.products));
+  }, []);
+
+  const handleSearch = () => {
+    const matchingItems = product.filter((item) =>
+      item.title.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    setSearchResults(matchingItems);
+  };
+
+  const handleItemClick = (itemId: number) => {
+    // Redirect to the page with the corresponding item ID
+    router.push(`/product/${itemId}`);
+    setShowSearchInput(false);
+    setSearchTerm('');
+  };
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const uid = user.uid;
+        setUserDisplayName(user.displayName || ''); // Use user's display name if available
+        setEmail(user.email || '');
+        console.log('uid', uid);
+        console.log(user)
+      } else {
+        setUserDisplayName('');
+        console.log('user is logged out');
+      }
+      setLoadingAuth(false); // Set loading to false once authentication state is determined
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  const userSignOut = async () => {
+    try {
+      localStorage.removeItem('cartItems');
+      await signOut(auth);
+      toast.success('Sign out successful');
+    } catch (error) {
+      console.error(error);
+    }
+    window.location.reload();
+  };
 
   useEffect(() => {
     const storedCart = JSON.parse(localStorage.getItem('cartItems') || '[]');
     setCart(storedCart);
-    setCartqty(storedCart.length)
+    setCartqty(storedCart.length);
   }, []);
 
   return (
@@ -500,21 +582,159 @@ export default function Navbar() {
 
               <div className="ml-auto flex items-center">
                 <div className="hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:space-x-6">
-                  <Link
-                    href="/login"
-                    className="text-sm font-medium text-gray-700 hover:text-gray-800"
-                  >
-                    Sign in
-                  </Link>
-                  <span className="h-6 w-px bg-gray-200" aria-hidden="true" />
-                  <Link
-                    href="/signup"
-                    className="text-sm font-medium text-gray-700 hover:text-gray-800"
-                  >
-                    Create account
-                  </Link>
-                </div>
+                  {loadingAuth ? (
+                    <span className="text-sm font-medium text-gray-700">
+                      Loading...
+                    </span>
+                  ) : email ? (
+                    <Menu as="div" className="relative inline-block text-left">
+                      <div>
+                        <Menu.Button className="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+                          {email}
+                          <ChevronDownIcon
+                            className="-mr-1 h-5 w-5 text-gray-400"
+                            aria-hidden="true"
+                          />
+                        </Menu.Button>
+                      </div>
 
+                      <Transition
+                        as={Fragment}
+                        enter="transition ease-out duration-100"
+                        enterFrom="transform opacity-0 scale-95"
+                        enterTo="transform opacity-100 scale-100"
+                        leave="transition ease-in duration-75"
+                        leaveFrom="transform opacity-100 scale-100"
+                        leaveTo="transform opacity-0 scale-95"
+                      >
+                        <Menu.Items className="absolute right-0 z-10 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                          {/* Menu items go here */}
+                          {/* ... (your menu items) */}
+                          <div className="py-1">
+                            <Menu.Item>
+                              {({ active }) => (
+                                <a
+                                  href="#"
+                                  className={classNames(
+                                    active
+                                      ? 'bg-gray-100 text-gray-900'
+                                      : 'text-gray-700',
+                                    'block px-4 py-2 text-sm'
+                                  )}
+                                >
+                                  My Orders
+                                </a>
+                              )}
+                            </Menu.Item>
+                            <Menu.Item>
+                              {({ active }) => (
+                                <a
+                                  href="#"
+                                  className={classNames(
+                                    active
+                                      ? 'bg-gray-100 text-gray-900'
+                                      : 'text-gray-700',
+                                    'block px-4 py-2 text-sm'
+                                  )}
+                                >
+                                  My info
+                                </a>
+                              )}
+                            </Menu.Item>
+                          </div>
+                          <div className="py-1">
+                            <Menu.Item>
+                              {({ active }) => (
+                                <a
+                                  href="#"
+                                  className={classNames(
+                                    active
+                                      ? 'bg-gray-100 text-gray-900'
+                                      : 'text-gray-700',
+                                    'group flex items-center px-4 py-2 text-sm'
+                                  )}
+                                >
+                                  <UserPlusIcon
+                                    className="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500"
+                                    aria-hidden="true"
+                                  />
+                                  Share
+                                </a>
+                              )}
+                            </Menu.Item>
+                            <Menu.Item>
+                              {({ active }) => (
+                                <a
+                                  href="#"
+                                  className={classNames(
+                                    active
+                                      ? 'bg-gray-100 text-gray-900'
+                                      : 'text-gray-700',
+                                    'group flex items-center px-4 py-2 text-sm'
+                                  )}
+                                >
+                                  <HeartIcon
+                                    className="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500"
+                                    aria-hidden="true"
+                                  />
+                                  Favorites
+                                </a>
+                              )}
+                            </Menu.Item>
+                          </div>
+                          <div className="py-1">
+                            <Menu.Item>
+                              {({ active }) => (
+                                <button
+                                  onClick={userSignOut}
+                                  className={classNames(
+                                    active
+                                      ? 'bg-gray-100 text-gray-900'
+                                      : 'text-gray-700',
+                                    'group flex items-center px-4 py-2 text-sm'
+                                  )}
+                                >
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 24 24"
+                                    fill="currentColor"
+                                    className="w-6 h-6"
+                                  >
+                                    <path
+                                      fillRule="evenodd"
+                                      d="M7.5 3.75A1.5 1.5 0 006 5.25v13.5a1.5 1.5 0 001.5 1.5h6a1.5 1.5 0 001.5-1.5V15a.75.75 0 011.5 0v3.75a3 3 0 01-3 3h-6a3 3 0 01-3-3V5.25a3 3 0 013-3h6a3 3 0 013 3V9A.75.75 0 0115 9V5.25a1.5 1.5 0 00-1.5-1.5h-6zm5.03 4.72a.75.75 0 010 1.06l-1.72 1.72h10.94a.75.75 0 010 1.5H10.81l1.72 1.72a.75.75 0 11-1.06 1.06l-3-3a.75.75 0 010-1.06l3-3a.75.75 0 011.06 0z"
+                                      clipRule="evenodd"
+                                    />
+                                  </svg>
+                                  Logout
+                                </button>
+                              )}
+                            </Menu.Item>
+                          </div>
+                        </Menu.Items>
+                      </Transition>
+                    </Menu>
+                  ) : (
+                    <>
+                      <Link
+                        href="/login"
+                        className="text-sm font-medium text-gray-700 hover:text-gray-800"
+                      >
+                        Sign in
+                      </Link>
+                      <span
+                        className="h-6 w-px bg-gray-200"
+                        aria-hidden="true"
+                      />
+                      <Link
+                        href="/signup"
+                        className="text-sm font-medium text-gray-700 hover:text-gray-800"
+                      >
+                        Create account
+                      </Link>
+                    </>
+                  )}
+                </div>
                 <div className="hidden lg:ml-8 lg:flex">
                   <Link
                     href="#"
@@ -530,15 +750,66 @@ export default function Navbar() {
                   </Link>
                 </div>
 
+                
                 {/* Search */}
-                <div className="flex lg:ml-6">
-                  <a href="#" className="p-2 text-gray-400 hover:text-gray-500">
-                    <span className="sr-only">Search</span>
-                    <MagnifyingGlassIcon
-                      className="h-6 w-6"
-                      aria-hidden="true"
-                    />
-                  </a>
+                <div className="relative mx-3">
+                  {showSearchInput ? (
+                    <div className="relative">
+                      <input
+                        type="text"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        placeholder="Search..."
+                        className="py-1.5 pr-8 pl-4 block w-40 bg-white rounded-md border border-gray-300 focus:outline-none focus:border-indigo-500"
+                      />
+                      <button
+                        onClick={handleSearch}
+                        className="absolute top-0 right-0 h-full px-2 focus:outline-none"
+                      >
+                        <MagnifyingGlassIcon
+                          className="h-6 w-6"
+                          aria-hidden="true"
+                        />
+                      </button>
+
+                      {/* Dropdown for search results */}
+                      <div className="absolute mt-1 bg-white w-40 rounded-md border border-gray-300 shadow-lg">
+                        {searchTerm.trim() === '' ? (
+                          <div className="px-4 py-2 cursor-pointer text-gray-500">
+                            Search our items
+                          </div>
+                        ) : searchResults.length > 0 ? (
+                          searchResults.map((item) => (
+                            <div
+                              key={item.id}
+                              className="px-4 py-2 cursor-pointer hover:bg-gray-100"
+                              onClick={() => handleItemClick(item.id)}
+                            >
+                              {item.title}
+                            </div>
+                          ))
+                        ) : (
+                          <div className="px-4 py-2 cursor-pointer text-gray-500">
+                            Product not available
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex lg:ml-6">
+                      <a
+                        href="#"
+                        className="p-2 text-gray-400 hover:text-gray-500"
+                        onClick={() => setShowSearchInput(true)}
+                      >
+                        <span className="sr-only">Search</span>
+                        <MagnifyingGlassIcon
+                          className="h-6 w-6"
+                          aria-hidden="true"
+                        />
+                      </a>
+                    </div>
+                  )}
                 </div>
 
                 {/* Cart */}

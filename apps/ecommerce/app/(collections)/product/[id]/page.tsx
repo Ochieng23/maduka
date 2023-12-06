@@ -207,28 +207,29 @@ export default function Example() {
         quantity: 1,
       });
       console.error('Added to cart');
-      
     } else {
       console.error('Error: Unable to add product to the cart');
     }
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(
-          `https://dummyjson.com/products/${params.id}`
-        );
-        const data: Product = await response.json(); 
+  const fetchData = async () => {
+    try {
+      if (params && params.id) {
+        const response = await fetch(`https://dummyjson.com/products/${params.id}`);
+        const data: Product = await response.json();
         setMerch(data);
         checkincart(data);
-      } catch (error) {
-        console.error('Error fetching data:', error);
+      } else {
+        console.error('Error: No valid ID provided in params');
       }
-    };
-
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+  
+  useEffect(() => {
     fetchData();
-  }, [params.id]);
+  }, [params?.id]);  // Using optional chaining to handle null or undefined params
 
   return (
     <>

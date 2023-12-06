@@ -1,0 +1,55 @@
+// schema.prisma
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("POSTGRES_PRISMA_URL")
+}
+
+// New model for clothes
+model Clothing {
+    id                 String   @id @default(cuid())
+    title              String
+    colors              String[]
+    quantity           Int
+    images             String[]
+    sizes              String[]
+    price              Float
+    description        String
+    brand              String
+    categories         String[]
+    discountPercentage Float
+    rating             Float
+    createdAt          DateTime @default(now()) @map(name: "created_at")
+    updatedAt          DateTime @updatedAt @map(name: "updated_at")
+
+    // Define a relation to User if necessary
+    userId String // Assuming userId is a foreign key to User model
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@unique([userId, title]) // Ensures uniqueness of clothing titles per user
+}
+
+// Extend the User model with a relation to Clothing
+model User {
+    id             String     @id @default(cuid())
+    name           String?
+    email          String?    @unique
+    emailVerified  DateTime?
+    image          String?
+    hashedPassword String?
+    createdAt      DateTime   @default(now()) @map(name: "created_at")
+    updatedAt      DateTime   @updatedAt @map(name: "updated_at")
+    role           Role       @default(USER)
+    clothes        Clothing[]
+
+    @@map(name: "users")
+}
+
+enum Role {
+    USER
+    ADMIN
+}

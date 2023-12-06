@@ -339,9 +339,9 @@ export default function Example() {
                 <div className="flex items-end p-6">
                   <div>
                     <h3 className="font-semibold text-white">
-                      <a href="#">
+                      <a href="/laptops">
                         <span className="absolute inset-0" />
-                        New Arrivals
+                        Laptops
                       </a>
                     </h3>
                     <p aria-hidden="true" className="mt-1 text-sm text-white">
@@ -363,9 +363,9 @@ export default function Example() {
                 <div className="flex items-end p-6 sm:absolute sm:inset-0">
                   <div>
                     <h3 className="font-semibold text-white">
-                      <a href="#">
+                      <a href="/trending">
                         <span className="absolute inset-0" />
-                        Accessories
+                        Smartphones
                       </a>
                     </h3>
                     <p aria-hidden="true" className="mt-1 text-sm text-white">
@@ -387,9 +387,9 @@ export default function Example() {
                 <div className="flex items-end p-6 sm:absolute sm:inset-0">
                   <div>
                     <h3 className="font-semibold text-white">
-                      <a href="#">
+                      <a href="/decoration">
                         <span className="absolute inset-0" />
-                        Workspace
+                        Decor
                       </a>
                     </h3>
                     <p aria-hidden="true" className="mt-1 text-sm text-white">

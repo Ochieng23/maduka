@@ -18,17 +18,17 @@ interface Product {
 }
 
 function Page() {
-  const [smartphones, setSmartphones] = useState<Product[]>([]);
+  const [laptops, setLaptops] = useState<Product[]>([]);
 
   useEffect(() => {
     fetch('https://dummyjson.com/products')
       .then((res) => res.json())
       .then((json: { products: Product[] }) => {
         // Filter products by category 'smartphones'
-        const smartphones = json.products.filter(
-          (product) => product.category === 'smartphones'
+        const laptops = json.products.filter(
+          (product) => product.category === 'laptops'
         );
-        setSmartphones(smartphones);
+        setLaptops(laptops);
       });
   }, []);
 
@@ -39,9 +39,9 @@ function Page() {
           <h2 className="sr-only">Products</h2>
 
           <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8 ">
-            {smartphones &&
-              Array.isArray(smartphones) &&
-              smartphones.map((product) => (
+            {laptops &&
+              Array.isArray(laptops) &&
+              laptops.map((product) => (
                 <Link
                   key={product.id}
                   href="/product/[id]"

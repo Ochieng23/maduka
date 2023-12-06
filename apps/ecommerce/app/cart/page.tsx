@@ -14,7 +14,7 @@ import {
   XMarkIcon as XMarkIconMini,
 } from '@heroicons/react/20/solid';
 import { useCart } from './components/cartContext';
-
+import Link from 'next/link';
 const navigation = {
   categories: [
     {
@@ -295,6 +295,9 @@ export default function Example() {
           Shopping Cart
         </h1>
 
+        {cart.length === 0 ? (
+  <h2 className='ml-5 mt-5'>Your cart is empty</h2>
+) : (
         <form className="mt-12 lg:grid lg:grid-cols-12 lg:items-start lg:gap-x-12 xl:gap-x-16">
           <section aria-labelledby="cart-heading" className="lg:col-span-7">
             <h2 id="cart-heading" className="sr-only">
@@ -493,15 +496,17 @@ export default function Example() {
             </dl>
 
             <div className="mt-6">
-              <button
+              <Link
+              href="/checkout"
                 type="submit"
                 className="w-full rounded-md border border-transparent bg-indigo-600 px-4 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50"
               >
                 Checkout
-              </button>
+              </Link>
             </div>
           </section>
         </form>
+        )}
 
         {/* Related products */}
         <section aria-labelledby="related-heading" className="mt-24">

@@ -218,7 +218,7 @@ export default function Example() {
           <div className="relative mx-auto max-w-7xl px-4 sm:static sm:px-6 lg:px-8">
             <div className="sm:max-w-lg">
               <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
-                Summer styles are finally here
+                Winter sale off is finally here
               </h1>
               <p className="mt-4 text-xl text-gray-500">
                 This year, our new summer collection will shelter you from the
@@ -328,7 +328,7 @@ export default function Example() {
             <div className="mt-6 grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:grid-rows-2 sm:gap-x-6 lg:gap-8">
               <div className="group aspect-h-1 aspect-w-2 overflow-hidden rounded-lg sm:aspect-h-1 sm:aspect-w-1 sm:row-span-2">
                 <img
-                  src="https://tailwindui.com/img/ecommerce-images/home-page-03-featured-category.jpg"
+                  src="https://blog.architizer.com/wp-content/uploads/laptops-article.jpg"
                   alt="Two models wearing women's black cotton crewneck tee and off-white cotton crewneck tee."
                   className="object-cover object-center group-hover:opacity-75"
                 />
@@ -352,7 +352,7 @@ export default function Example() {
               </div>
               <div className="group aspect-h-1 aspect-w-2 overflow-hidden rounded-lg sm:aspect-none sm:relative sm:h-full">
                 <img
-                  src="https://tailwindui.com/img/ecommerce-images/home-page-03-category-01.jpg"
+                  src="https://m-cdn.phonearena.com/images/article/64576-wide-two_1200/The-Best-Phones-to-buy-in-2023---our-top-10-list.jpg?1701080476"
                   alt="Wooden shelf with gray and olive drab green baseball caps, next to wooden clothes hanger with sweaters."
                   className="object-cover object-center group-hover:opacity-75 sm:absolute sm:inset-0 sm:h-full sm:w-full"
                 />

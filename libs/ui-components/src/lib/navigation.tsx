@@ -754,7 +754,7 @@ export default function Navbar() {
                 {/* Search */}
                 <div className="relative mx-3">
                   {showSearchInput ? (
-                    <div className="relative">
+                    <div className="relative z-10">
                       <input
                         type="text"
                         value={searchTerm}

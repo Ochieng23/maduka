@@ -32,7 +32,7 @@ export default function RootLayout({
           />
           <div className="flex flex-col min-h-screen">
             <header>
-              {' '}
+              {' '} 
               <Navbar />
             </header>
             <main className="flex-grow">{children}</main>
@@ -42,4 +42,5 @@ export default function RootLayout({
       </body>
     </html>
   );
+  
 }
